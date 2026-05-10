@@ -44,29 +44,29 @@ const InteractiveCellViewer = () => {
   const isDragging = useMotionValue(false);
 
   // Premium Apple-style spring physics: heavy mass, high damping for silky smooth, suspended momentum
-  const springConfig = { damping: 48, stiffness: 120, mass: 1.85, restDelta: 0.001 };
+  const springConfig = { damping: 52, stiffness: 132, mass: 1.95, restDelta: 0.001 };
   const x = useSpring(rawX, springConfig);
   const y = useSpring(rawY, springConfig);
 
   // Slow cinematic drift for museum-grade suspension
   const time = useTime();
-  const breathY = useTransform(time, [0, 11000, 22000], [0, -6, 0], { clamp: false });
-  const breathScale = useTransform(time, [0, 9000, 18000], [1, 1.006, 1], { clamp: false });
-  const floatRotate = useTransform(time, [0, 16000, 32000], [-0.6, 0.6, -0.6], { clamp: false });
+  const breathY = useTransform(time, [0, 12000, 24000], [0, -5, 0], { clamp: false });
+  const breathScale = useTransform(time, [0, 11000, 22000], [1, 1.005, 1], { clamp: false });
+  const floatRotate = useTransform(time, [0, 18000, 36000], [-0.45, 0.45, -0.45], { clamp: false });
 
   // 1. 2.5D ROTATION - Restricted bounds to maintain illusion integrity
-  const rotateX = useTransform(y, [-400, 400], [10, -10]);
-  const rotateY = useTransform(x, [-400, 400], [-10, 10]);
+  const rotateX = useTransform(y, [-400, 400], [8.5, -8.5]);
+  const rotateY = useTransform(x, [-400, 400], [-8.5, 8.5]);
 
   // 2. TACTILE PARALLAX SHIFTS - Layers translate slightly off-axis to simulate internal volume
   const reliefX = useTransform(x, [-400, 400], [8, -8]);
   const reliefY = useTransform(y, [-400, 400], [8, -8]);
   
-  const depthX = useTransform(x, [-400, 400], [-11, 11]);
-  const depthY = useTransform(y, [-400, 400], [-11, 11]);
+  const depthX = useTransform(x, [-400, 400], [-10, 10]);
+  const depthY = useTransform(y, [-400, 400], [-10, 10]);
   
-  const organelleX = useTransform(x, [-400, 400], [-24, 24]);
-  const organelleY = useTransform(y, [-400, 400], [-24, 24]);
+  const organelleX = useTransform(x, [-400, 400], [-20, 20]);
+  const organelleY = useTransform(y, [-400, 400], [-20, 20]);
 
   // 3. DYNAMIC SPECULAR LIGHTING - Soft membrane gloss responding to cursor/drag
   const lightX = useTransform(x, [-400, 400], [70, 30]);
@@ -74,6 +74,20 @@ const InteractiveCellViewer = () => {
   
   const highlightBg = useMotionTemplate`radial-gradient(circle at ${lightX}% ${lightY}%, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.12) 28%, rgba(255, 255, 255, 0.03) 48%, rgba(255, 255, 255, 0) 68%)`;
   const rimLightBg = useMotionTemplate`radial-gradient(65% 60% at ${lightX}% ${lightY}%, rgba(255,255,255,0.24), rgba(255,255,255,0) 70%)`;
+
+  // Multi-layer organelle drift: restrained depth stacking from a single sheet
+  const organelleMidX = useTransform(x, [-400, 400], [-13, 13]);
+  const organelleMidY = useTransform(y, [-400, 400], [-13, 13]);
+
+  // Depth map driven tonality shifts for perceived light direction changes
+  const depthBrightness = useTransform(y, [-400, 0, 400], [1.08, 1.0, 0.94]);
+  const depthContrast = useTransform(x, [-400, 0, 400], [1.02, 1.0, 1.06]);
+  const depthSaturate = useTransform(x, [-400, 400], [0.98, 1.04]);
+  const depthFilter = useMotionTemplate`brightness(${depthBrightness}) contrast(${depthContrast}) saturate(${depthSaturate})`;
+
+  // Micro lighting shift for hero body, tied to interaction depth
+  const heroBrightness = useTransform(y, [-400, 400], [1.02, 0.985]);
+  const heroFilter = useMotionTemplate`brightness(${heroBrightness})`;
 
   // 4. ANCHORING SHADOWS - Moves opposite to interaction to ground the object
   const dropShadowX = useTransform(x, [-400, 400], [16, -16]);
@@ -140,13 +154,13 @@ const InteractiveCellViewer = () => {
           className="relative w-full aspect-square pointer-events-auto cursor-grab active:cursor-grabbing"
           drag
           dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
-          dragElastic={0.1}
+          dragElastic={0.14}
           dragMomentum
           dragTransition={{
-            power: 0.18,
-            timeConstant: 430,
-            bounceStiffness: 180,
-            bounceDamping: 30
+            power: 0.24,
+            timeConstant: 520,
+            bounceStiffness: 160,
+            bounceDamping: 34
           }}
           onDragStart={() => isDragging.set(true)}
           onDrag={(e, info) => {
@@ -184,7 +198,7 @@ const InteractiveCellViewer = () => {
           <motion.img
             src={ASSETS.hero}
             className="absolute inset-0 w-full h-full object-contain pointer-events-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.15)]"
-            style={{ translateZ: 0, willChange: 'transform' }}
+            style={{ translateZ: 0, filter: heroFilter, willChange: 'transform, filter' }}
             draggable={false}
           />
 
@@ -192,15 +206,21 @@ const InteractiveCellViewer = () => {
           <motion.img
             src={ASSETS.depth}
             className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-screen opacity-[0.32]"
-            style={{ x: depthX, y: depthY, translateZ: 15, willChange: 'transform' }}
+            style={{ x: depthX, y: depthY, filter: depthFilter, translateZ: 15, willChange: 'transform, filter' }}
             draggable={false}
           />
 
           {/* 4. Organelles Parallax - Foreground elements popping off the surface */}
           <motion.img
             src={ASSETS.organelles}
-            className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-overlay opacity-[0.45]"
-            style={{ x: organelleX, y: organelleY, translateZ: 30, willChange: 'transform' }}
+            className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-overlay opacity-[0.3]"
+            style={{ x: organelleMidX, y: organelleMidY, translateZ: 22, willChange: 'transform' }}
+            draggable={false}
+          />
+          <motion.img
+            src={ASSETS.organelles}
+            className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-overlay opacity-[0.38]"
+            style={{ x: organelleX, y: organelleY, translateZ: 34, willChange: 'transform' }}
             draggable={false}
           />
 
