@@ -8,11 +8,31 @@ import {
 
 // --- ASSETS ---
 const ASSETS = {
-  ui: "https://raw.githubusercontent.com/AlexBarba-x/cell-architecture-core-assets/main/cell_architecture_studio_ui.png",
   hero: "https://raw.githubusercontent.com/AlexBarba-x/cell-architecture-core-assets/main/white_blood_cell_hero_original.png",
   depth: "https://raw.githubusercontent.com/AlexBarba-x/cell-architecture-core-assets/main/white_blood_cell_depth_map.png",
   relief: "https://raw.githubusercontent.com/AlexBarba-x/cell-architecture-core-assets/main/white_blood_cell_relief_map.png",
   organelles: "https://raw.githubusercontent.com/AlexBarba-x/cell-architecture-core-assets/main/white_blood_cell_organelle_sheet.png"
+};
+
+const FALLBACK_DATA_URI = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 800'%3E%3Cdefs%3E%3CradialGradient id='g' cx='50%25' cy='50%25' r='60%25'%3E%3Cstop offset='0%25' stop-color='%23fdfbf7'/%3E%3Cstop offset='100%25' stop-color='%23ebe4da'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='800' height='800' fill='url(%23g)'/%3E%3Ccircle cx='400' cy='400' r='220' fill='%236A4C93' fill-opacity='.16'/%3E%3Ctext x='400' y='415' text-anchor='middle' font-family='Inter,sans-serif' font-size='28' fill='%237A736E'%3EAsset loading…%3C/text%3E%3C/svg%3E";
+
+const LayeredImage = ({ src, alt, className, style }) => {
+  const [failed, setFailed] = useState(false);
+
+  return (
+    <motion.img
+      src={failed ? FALLBACK_DATA_URI : src}
+      alt={alt}
+      className={className}
+      style={style}
+      draggable={false}
+      loading="lazy"
+      decoding="async"
+      fetchPriority="high"
+      crossOrigin="anonymous"
+      onError={() => setFailed(true)}
+    />
+  );
 };
 
 // --- DATA ---
@@ -187,41 +207,41 @@ const InteractiveCellViewer = () => {
           />
 
           {/* 1. Base Relief Map - Subtle rear shadows tracking away from light */}
-          <motion.img
+          <LayeredImage
             src={ASSETS.relief}
+            alt="Cell relief map"
             className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-multiply opacity-[0.35]"
             style={{ x: reliefX, y: reliefY, translateZ: -10, willChange: 'transform' }}
-            draggable={false}
           />
 
           {/* 2. PRISTINE HERO LAYER */}
-          <motion.img
+          <LayeredImage
             src={ASSETS.hero}
+            alt="White blood cell hero layer"
             className="absolute inset-0 w-full h-full object-contain pointer-events-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.15)]"
             style={{ translateZ: 0, filter: heroFilter, willChange: 'transform, filter' }}
-            draggable={false}
           />
 
           {/* 3. Depth Map Parallax - Volumetric highlights and internal depth */}
-          <motion.img
+          <LayeredImage
             src={ASSETS.depth}
+            alt="Cell depth map"
             className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-screen opacity-[0.32]"
             style={{ x: depthX, y: depthY, filter: depthFilter, translateZ: 15, willChange: 'transform, filter' }}
-            draggable={false}
           />
 
           {/* 4. Organelles Parallax - Foreground elements popping off the surface */}
-          <motion.img
+          <LayeredImage
             src={ASSETS.organelles}
+            alt="Organelle overlay"
             className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-overlay opacity-[0.3]"
             style={{ x: organelleMidX, y: organelleMidY, translateZ: 22, willChange: 'transform' }}
-            draggable={false}
           />
-          <motion.img
+          <LayeredImage
             src={ASSETS.organelles}
+            alt="Organelle foreground overlay"
             className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-overlay opacity-[0.38]"
             style={{ x: organelleX, y: organelleY, translateZ: 34, willChange: 'transform' }}
-            draggable={false}
           />
 
           {/* 5. Responsive Lighting Gradient - Membrane specularity */}
@@ -286,7 +306,7 @@ const PremiumPanel = ({ children, className }) => (
 // --- ARCHITECTURE LAYOUT BLOCKS ---
 
 const TopNav = () => (
-  <header className="h-[72px] flex items-center justify-between px-8 border-b border-black/5 bg-[#FDFBF7]/80 backdrop-blur-xl shrink-0 z-40 relative">
+  <header className="h-[72px] flex items-center justify-between px-4 md:px-8 border-b border-black/5 bg-[#FDFBF7]/80 backdrop-blur-xl shrink-0 z-40 relative">
     <div className="flex items-center gap-4">
       <motion.div 
         whileHover={{ rotate: 15, scale: 1.05 }}
@@ -303,7 +323,7 @@ const TopNav = () => (
       </div>
     </div>
 
-    <nav className="flex items-center gap-7">
+    <nav className="hidden md:flex items-center gap-4 lg:gap-7">
       {[
         { icon: Grid, label: 'Gallery' },
         { icon: Layers, label: 'Library' },
@@ -318,7 +338,7 @@ const TopNav = () => (
       <div className="w-px h-8 bg-black/10 mx-1"></div>
       <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-2 cursor-pointer group">
         <div className="w-10 h-10 rounded-full bg-[#E8E2F0] p-0.5 shadow-sm overflow-hidden flex items-center justify-center border border-white">
-           <img src="https://i.pravatar.cc/150?img=44" alt="User" className="w-full h-full rounded-full object-cover" />
+           <img src="https://i.pravatar.cc/150?img=44" alt="User" className="w-full h-full rounded-full object-cover" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={(e) => { e.currentTarget.style.opacity = "0.35"; }} />
         </div>
         <ChevronDown size={14} className="text-[#7A736E] group-hover:text-[#2D2926] transition-colors" />
       </motion.div>
@@ -683,13 +703,35 @@ export default function App() {
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.15); border-radius: 10px; }
         .custom-scrollbar:hover::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.25); }
+
+        @media (max-width: 1279px) {
+          main {
+            grid-template-columns: minmax(210px, 240px) 1fr !important;
+          }
+          main > :last-child {
+            display: none;
+          }
+        }
+
+        @media (max-width: 1023px) {
+          header {
+            height: 64px;
+          }
+          main {
+            grid-template-columns: 1fr !important;
+            height: calc(100vh - 64px) !important;
+          }
+          main > :first-child {
+            display: none;
+          }
+        }
       `}</style>
       
       <div className="h-screen w-screen bg-[#FDFBF7] text-[#2D2926] font-sans flex flex-col overflow-hidden selection:bg-[#E8E2F0]">
         <TopNav />
         <main 
-          className="grid gap-[20px] p-5"
-          style={{ gridTemplateColumns: '260px 1fr 330px', height: 'calc(100vh - 72px)' }}
+          className="grid gap-4 lg:gap-[20px] p-3 md:p-5"
+          style={{ gridTemplateColumns: 'minmax(220px,260px) 1fr minmax(280px,330px)', height: 'calc(100vh - 72px)' }}
         >
           <LeftColumn
             selectedOrganelleId={selectedOrganelleId}
