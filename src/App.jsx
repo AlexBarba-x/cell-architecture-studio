@@ -244,9 +244,13 @@ const TopNav = () => (
     <div className="flex items-center gap-4">
       <motion.div 
         whileHover={{ rotate: 15, scale: 1.05 }}
-        className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#D986FF] to-[#B97CCB] flex items-center justify-center text-white shadow-inner shadow-black/20"
+        className="w-10 h-10 rounded-2xl bg-[#F0EDE8] flex items-center justify-center shadow-inner shadow-black/10"
       >
-        <span className="text-lg font-serif italic tracking-wide">S</span>
+        <svg viewBox="0 0 128 128" className="w-8 h-8" role="img" aria-label="Dragon Hall crest">
+          <path d="M64 14 96 25v27c0 24-13 45-32 58C45 97 32 76 32 52V25z" fill="#171713" />
+          <path d="M49 46c6-8 18-7 26-2-7-1-12 2-15 6 6 0 11 2 14 7-6-3-14-2-21 3 2-6 6-10 11-14-6-1-11 0-15 4z" fill="#F0EDE8" />
+          <circle cx="72" cy="44" r="2.2" fill="#D986FF" />
+        </svg>
       </motion.div>
       <div className="flex flex-col justify-center">
         <h1 className="font-serif text-[22px] text-[#1D1B19] leading-none tracking-tight">Dragon Hall</h1>
