@@ -44,10 +44,10 @@ const CELL_TYPES = [
 ];
 
 const ORGANELLES = [
-  { id: 'nucleus', name: 'Nucleus', color: '#6A4C93', summary: 'Houses DNA and coordinates core cellular decisions.', detail: 'The nucleus protects the genome and regulates transcription programs that determine immune response behavior.' },
-  { id: 'lobed', name: 'Lobed Nucleus', color: '#8A68B4', summary: 'Segmented architecture that improves flexibility in transit.', detail: 'A lobed profile helps white blood cells deform and migrate through narrow endothelial junctions.' },
+  { id: 'nucleus', name: 'Nucleus', color: '#D986FF', summary: 'Houses DNA and coordinates core cellular decisions.', detail: 'The nucleus protects the genome and regulates transcription programs that determine immune response behavior.' },
+  { id: 'lobed', name: 'Lobed Nucleus', color: '#C97AEE', summary: 'Segmented architecture that improves flexibility in transit.', detail: 'A lobed profile helps white blood cells deform and migrate through narrow endothelial junctions.' },
   { id: 'plasma', name: 'Plasma Membrane', color: '#D4B886', summary: 'Selective, signaling-rich cellular boundary.', detail: 'Membrane receptors detect chemotactic cues and coordinate movement toward inflammatory targets.' },
-  { id: 'lysosome', name: 'Lysosome', color: '#D9738A', summary: 'Acidic recycling center for biomolecular cleanup.', detail: 'Lysosomes digest engulfed pathogens and recycle macromolecules with pH-dependent hydrolase enzymes.' },
+  { id: 'lysosome', name: 'Lysosome', color: '#B97CCB', summary: 'Acidic recycling center for biomolecular cleanup.', detail: 'Lysosomes digest engulfed pathogens and recycle macromolecules with pH-dependent hydrolase enzymes.' },
   { id: 'golgi', name: 'Golgi Apparatus', color: '#E8A598', summary: 'Modifies and routes proteins to functional destinations.', detail: 'The Golgi packages enzymes and membrane proteins required for secretion, trafficking, and immune signaling.' },
 ];
 
@@ -240,20 +240,20 @@ const PremiumPanel = ({ children, className }) => (
 // --- ARCHITECTURE LAYOUT BLOCKS ---
 
 const TopNav = () => (
-  <header className="h-[72px] flex items-center justify-between px-4 md:px-8 border-b border-black/5 bg-[#FDFBF7]/80 backdrop-blur-xl shrink-0 z-40 relative">
+  <header className="h-[72px] flex items-center justify-between px-4 md:px-8 border-b border-black/5 bg-[#F0EDE8]/80 backdrop-blur-xl shrink-0 z-40 relative">
     <div className="flex items-center gap-4">
       <motion.div 
         whileHover={{ rotate: 15, scale: 1.05 }}
-        className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#6A4C93] to-[#D9738A] flex items-center justify-center text-white shadow-inner shadow-black/20"
+        className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#D986FF] to-[#B97CCB] flex items-center justify-center text-white shadow-inner shadow-black/20"
       >
-        <span className="text-xl drop-shadow-md">🦠</span>
+        <span className="text-lg font-serif italic tracking-wide">S</span>
       </motion.div>
       <div className="flex flex-col justify-center">
-        <h1 className="font-serif text-[22px] text-[#2D2926] leading-none tracking-tight">Cell Architecture Studio</h1>
+        <h1 className="font-serif text-[22px] text-[#1D1B19] leading-none tracking-tight">Dragon Hall</h1>
       </div>
       <div className="hidden md:flex items-center gap-2 ml-4">
         <div className="h-4 w-px bg-black/10" />
-        <span className="text-xs italic text-[#8B847C] font-serif pt-1">Explore life at the microscopic level ✦</span>
+        <span className="text-xs italic text-[#8A837A] font-serif pt-1">Brand Identity System</span>
       </div>
     </div>
 
@@ -264,17 +264,17 @@ const TopNav = () => (
         { icon: Book, label: 'Notebooks' },
         { icon: Settings, label: 'Settings' },
       ].map((item, idx) => (
-        <motion.button key={idx} whileHover={{ y: -2 }} className="flex flex-col items-center gap-1 text-[#7A736E] hover:text-[#2D2926] transition-colors group">
+        <motion.button key={idx} whileHover={{ y: -2 }} className="flex flex-col items-center gap-1 text-[#6E6961] hover:text-[#1D1B19] transition-colors group">
           <item.icon size={18} className="group-hover:drop-shadow-sm transition-all duration-300" />
           <span className="text-[10px] uppercase tracking-wider font-semibold opacity-80">{item.label}</span>
         </motion.button>
       ))}
       <div className="w-px h-8 bg-black/10 mx-1"></div>
       <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-2 cursor-pointer group">
-        <div className="w-10 h-10 rounded-full bg-[#E8E2F0] p-0.5 shadow-sm overflow-hidden flex items-center justify-center border border-white">
+        <div className="w-10 h-10 rounded-full bg-[#EDE7F4] p-0.5 shadow-sm overflow-hidden flex items-center justify-center border border-white">
            <img src="https://i.pravatar.cc/150?img=44" alt="User" className="w-full h-full rounded-full object-cover" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={(e) => { e.currentTarget.style.opacity = "0.35"; }} />
         </div>
-        <ChevronDown size={14} className="text-[#7A736E] group-hover:text-[#2D2926] transition-colors" />
+        <ChevronDown size={14} className="text-[#6E6961] group-hover:text-[#1D1B19] transition-colors" />
       </motion.div>
     </nav>
   </header>
@@ -284,8 +284,8 @@ const LeftColumn = ({ selectedOrganelleId, hoveredOrganelleId, setHoveredOrganel
   <aside className="flex flex-col gap-[20px] overflow-hidden h-full">
     <PremiumPanel className="flex flex-col flex-1">
       <div className="flex items-center justify-between mb-4 px-2">
-        <h2 className="text-xs uppercase tracking-widest text-[#7A736E] font-bold flex items-center gap-2">
-          <Layers size={14} className="text-[#6A4C93]" /> Cell Types
+        <h2 className="text-xs uppercase tracking-widest text-[#6E6961] font-bold flex items-center gap-2">
+          <Layers size={14} className="text-[#D986FF]" /> Cell Types
         </h2>
         <ChevronDown size={14} className="text-[#A39E98]" />
       </div>
@@ -293,15 +293,15 @@ const LeftColumn = ({ selectedOrganelleId, hoveredOrganelleId, setHoveredOrganel
       <div className="flex flex-col gap-1 overflow-y-auto pr-2 custom-scrollbar flex-1 -mr-2">
         {CELL_TYPES.map((cell) => (
           <PremiumButton key={cell.id} active={cell.active} className="flex items-center gap-3 p-3 rounded-2xl w-full text-left">
-            {cell.active && <motion.div layoutId="sidebarHighlight" className="absolute left-0 top-3 bottom-3 w-1 rounded-r-full bg-[#6A4C93]" />}
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow-inner ${cell.active ? 'bg-[#F2EEF7] border border-[#E8E2F0]' : 'bg-black/5 border border-transparent'}`}>
+            {cell.active && <motion.div layoutId="sidebarHighlight" className="absolute left-0 top-3 bottom-3 w-1 rounded-r-full bg-[#D986FF]" />}
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow-inner ${cell.active ? 'bg-[#F2EEF7] border border-[#EDE7F4]' : 'bg-black/5 border border-transparent'}`}>
               {cell.icon}
             </div>
             <div className="flex-1">
-              <h3 className={`font-semibold text-sm ${cell.active ? 'text-[#2D2926]' : 'text-[#5A544F]'}`}>{cell.name}</h3>
-              <p className="text-xs text-[#8B847C]">{cell.type}</p>
+              <h3 className={`font-semibold text-sm ${cell.active ? 'text-[#1D1B19]' : 'text-[#4C4842]'}`}>{cell.name}</h3>
+              <p className="text-xs text-[#8A837A]">{cell.type}</p>
             </div>
-            {cell.starred && <Star size={14} className="text-[#D9738A] fill-[#D9738A]" />}
+            {cell.starred && <Star size={14} className="text-[#B97CCB] fill-[#B97CCB]" />}
           </PremiumButton>
         ))}
       </div>
@@ -309,8 +309,8 @@ const LeftColumn = ({ selectedOrganelleId, hoveredOrganelleId, setHoveredOrganel
 
     <PremiumPanel className="h-[280px] flex flex-col shrink-0">
        <div className="flex items-center justify-between mb-4 px-2">
-        <h2 className="text-xs uppercase tracking-widest text-[#7A736E] font-bold flex items-center gap-2">
-          <Target size={14} className="text-[#D9738A]" /> Organelles
+        <h2 className="text-xs uppercase tracking-widest text-[#6E6961] font-bold flex items-center gap-2">
+          <Target size={14} className="text-[#B97CCB]" /> Organelles
         </h2>
         <ChevronDown size={14} className="text-[#A39E98]" />
       </div>
@@ -330,17 +330,17 @@ const LeftColumn = ({ selectedOrganelleId, hoveredOrganelleId, setHoveredOrganel
                 className={`flex items-center gap-3 px-3 py-2 rounded-xl w-full text-left transition-all duration-400 ${isHovered ? 'bg-white/85 border border-white shadow-[0_10px_20px_rgba(106,76,147,0.12)]' : ''}`}
               >
                 <div className="w-3 h-3 rounded-full shadow-inner border border-black/10 transition-transform duration-300" style={{ backgroundColor: org.color, transform: isHovered ? 'scale(1.15)' : 'scale(1)' }} />
-                <span className={`text-sm font-medium transition-colors duration-300 ${isActive ? 'text-[#2D2926]' : 'text-[#5A544F]'}`}>{org.name}</span>
+                <span className={`text-sm font-medium transition-colors duration-300 ${isActive ? 'text-[#1D1B19]' : 'text-[#4C4842]'}`}>{org.name}</span>
               </PremiumButton>
 
               <motion.div
                 initial={false}
                 animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 4 }}
                 transition={{ duration: 0.24, ease: [0.32, 0, 0.18, 1] }}
-                className="pointer-events-none absolute left-[calc(100%+10px)] top-1/2 -translate-y-1/2 w-56 z-20 bg-[#FDFBF7]/95 backdrop-blur-md border border-white rounded-xl shadow-lg px-3 py-2"
+                className="pointer-events-none absolute left-[calc(100%+10px)] top-1/2 -translate-y-1/2 w-56 z-20 bg-[#F0EDE8]/95 backdrop-blur-md border border-white rounded-xl shadow-lg px-3 py-2"
               >
-                <p className="text-[11px] uppercase tracking-widest text-[#8B847C] font-semibold mb-1">Educational Note</p>
-                <p className="text-xs text-[#5A544F] leading-relaxed">{org.summary}</p>
+                <p className="text-[11px] uppercase tracking-widest text-[#8A837A] font-semibold mb-1">Educational Note</p>
+                <p className="text-xs text-[#4C4842] leading-relaxed">{org.summary}</p>
               </motion.div>
             </div>
           );
@@ -350,7 +350,7 @@ const LeftColumn = ({ selectedOrganelleId, hoveredOrganelleId, setHoveredOrganel
       <motion.button 
         whileHover={{ scale: 1.01, backgroundColor: '#ffffff' }}
         whileTap={{ scale: 0.99 }}
-        className="mt-2 flex items-center justify-center gap-2 w-full py-3 bg-white/50 border border-[#EBE4DA] rounded-xl text-sm text-[#5A544F] font-medium transition-all shadow-sm text-[#2D2926]"
+        className="mt-2 flex items-center justify-center gap-2 w-full py-3 bg-white/50 border border-[#DDD7CF] rounded-xl text-sm text-[#4C4842] font-medium transition-all shadow-sm text-[#1D1B19]"
       >
         <Plus size={16} /> Add Organelle
       </motion.button>
@@ -364,23 +364,23 @@ const RightColumn = ({ selectedOrganelleId }) => {
   <aside className="flex flex-col gap-[20px] overflow-y-auto custom-scrollbar pr-1 h-full">
     <PremiumPanel>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="font-serif italic text-[#7A736E] uppercase tracking-widest text-[11px] font-bold">Organelle Details</h2>
+        <h2 className="font-serif italic text-[#6E6961] uppercase tracking-widest text-[11px] font-bold">Organelle Details</h2>
         <motion.div whileHover={{ scale: 1.1 }} className="cursor-pointer">
-           <Heart size={16} className="text-[#D9738A] fill-[#D9738A]" />
+           <Heart size={16} className="text-[#B97CCB] fill-[#B97CCB]" />
         </motion.div>
       </div>
       
       <div className="flex items-center gap-4 mb-6">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-b from-white to-[#F6F1EA] shadow-[0_2px_10px_rgb(0,0,0,0.05)] flex items-center justify-center border border-white">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-b from-white to-[#EFEBE5] shadow-[0_2px_10px_rgb(0,0,0,0.05)] flex items-center justify-center border border-white">
           <div className="grid grid-cols-3 gap-[3px] p-2.5">
             {Array.from({length: 9}).map((_, i) => (
-              <div key={i} className="w-2 h-2 rounded-full bg-[#6A4C93] shadow-inner" />
+              <div key={i} className="w-2 h-2 rounded-full bg-[#D986FF] shadow-inner" />
             ))}
           </div>
         </div>
         <div>
-          <motion.h3 key={selectedOrganelle.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="text-[22px] font-serif text-[#2D2926] leading-tight">{selectedOrganelle.name}</motion.h3>
-          <motion.p key={`${selectedOrganelle.id}-summary`} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="text-xs text-[#8B847C] italic mt-0.5">{selectedOrganelle.summary}</motion.p>
+          <motion.h3 key={selectedOrganelle.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="text-[22px] font-serif text-[#1D1B19] leading-tight">{selectedOrganelle.name}</motion.h3>
+          <motion.p key={`${selectedOrganelle.id}-summary`} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="text-xs text-[#8A837A] italic mt-0.5">{selectedOrganelle.summary}</motion.p>
         </div>
       </div>
 
@@ -391,38 +391,38 @@ const RightColumn = ({ selectedOrganelleId }) => {
           { label: 'Visible in LM', value: 'Yes, with stain' },
         ].map((stat, idx) => (
           <div key={idx} className="flex justify-between text-sm border-b border-black/5 pb-2">
-            <span className="text-[#8B847C]">{stat.label}</span>
-            <span className="text-[#2D2926] font-semibold">{stat.value}</span>
+            <span className="text-[#8A837A]">{stat.label}</span>
+            <span className="text-[#1D1B19] font-semibold">{stat.value}</span>
           </div>
         ))}
         <div className="flex justify-between items-center text-sm pt-1">
-          <span className="text-[#8B847C]">Label Visiblity</span>
+          <span className="text-[#8A837A]">Label Visiblity</span>
           <div className="flex items-center gap-3">
-            <motion.div whileTap={{ scale: 0.9 }} className="w-10 h-6 bg-[#6A4C93] rounded-full p-1 cursor-pointer relative shadow-inner">
+            <motion.div whileTap={{ scale: 0.9 }} className="w-10 h-6 bg-[#D986FF] rounded-full p-1 cursor-pointer relative shadow-inner">
               <motion.div layout className="w-4 h-4 bg-white rounded-full absolute right-1 shadow-sm" />
             </motion.div>
-            <div className="w-3 h-3 rounded-full bg-[#6A4C93] shadow-sm border border-black/10" />
+            <div className="w-3 h-3 rounded-full bg-[#D986FF] shadow-sm border border-black/10" />
           </div>
         </div>
       </div>
     </PremiumPanel>
 
     <PremiumPanel>
-      <h2 className="font-serif italic text-[#7A736E] uppercase tracking-widest text-[11px] font-bold mb-4">Biological Notes</h2>
-      <motion.p key={`${selectedOrganelle.id}-detail`} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="text-sm text-[#5A544F] leading-relaxed mb-4">
+      <h2 className="font-serif italic text-[#6E6961] uppercase tracking-widest text-[11px] font-bold mb-4">Biological Notes</h2>
+      <motion.p key={`${selectedOrganelle.id}-detail`} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="text-sm text-[#4C4842] leading-relaxed mb-4">
         {selectedOrganelle.detail}
       </motion.p>
-      <motion.div whileHover={{ scale: 1.01 }} className="p-4 bg-gradient-to-br from-[#FDFBF7] to-[#F6F1EA] rounded-2xl border border-white shadow-sm flex items-start gap-3">
+      <motion.div whileHover={{ scale: 1.01 }} className="p-4 bg-gradient-to-br from-[#FDFBF7] to-[#EFEBE5] rounded-2xl border border-white shadow-sm flex items-start gap-3">
         <span className="text-xl leading-none pt-0.5">✨</span>
-        <p className="text-xs text-[#6A4C93] italic font-semibold leading-relaxed">
+        <p className="text-xs text-[#D986FF] italic font-semibold leading-relaxed">
           Fun Fact: Some white blood cells can change shape to squeeze between blood vessel walls and reach infected tissue!
         </p>
       </motion.div>
     </PremiumPanel>
 
     <PremiumPanel>
-      <h2 className="font-serif italic text-[#7A736E] uppercase tracking-widest text-[11px] font-bold mb-4">Where It Occurs</h2>
-      <div className="h-36 bg-gradient-to-br from-white to-[#F6F1EA] rounded-2xl border border-white shadow-inner overflow-hidden relative flex items-center justify-center">
+      <h2 className="font-serif italic text-[#6E6961] uppercase tracking-widest text-[11px] font-bold mb-4">Where It Occurs</h2>
+      <div className="h-36 bg-gradient-to-br from-white to-[#EFEBE5] rounded-2xl border border-white shadow-inner overflow-hidden relative flex items-center justify-center">
         <div className="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-100 to-transparent" />
         <div className="absolute inset-0 flex items-center justify-center gap-6">
            <motion.span animate={{ y: [-2, 2, -2] }} transition={{ duration: 4, repeat: Infinity, ease: [0.32, 0, 0.18, 1] }} className="text-[50px] z-10 drop-shadow-md">
@@ -449,23 +449,23 @@ const CenterColumn = ({ selectedOrganelleId, hoveredOrganelleId, setHoveredOrgan
       
       {/* --- HERO STAGE --- */}
       <div 
-        className="relative flex-1 bg-gradient-to-br from-[#F6F1EA] to-[#EBE4DA]/40 rounded-3xl border border-white/80 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),_0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden"
+        className="relative flex-1 bg-gradient-to-br from-[#EFEBE5] to-[#DDD7CF]/40 rounded-3xl border border-white/80 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),_0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden"
         style={{ minHeight: '520px', minWidth: 0 }}
       >
         {/* Floating Note (z-index: 5) */}
         <div className="absolute top-6 left-6 pointer-events-none" style={{ zIndex: 5 }}>
-          <h1 className="font-serif text-5xl text-[#2D2926] mb-1 tracking-tight drop-shadow-sm">White Blood Cell</h1>
-          <p className="font-serif text-[22px] text-[#7A736E] italic">Immune Cell</p>
+          <h1 className="font-serif text-5xl text-[#1D1B19] mb-1 tracking-tight drop-shadow-sm">White Blood Cell</h1>
+          <p className="font-serif text-[22px] text-[#6E6961] italic">Immune Cell</p>
           
           <motion.div 
             initial={{ rotate: -5, scale: 0.9, opacity: 0 }}
             animate={{ rotate: -3, scale: 1, opacity: 1 }}
             transition={{ delay: 0.5, type: 'spring' }}
-            className="mt-6 bg-[#FDFBF7]/90 backdrop-blur-md p-4 rounded-2xl shadow-lg w-56 rotate-[-3deg] pointer-events-auto border border-white"
+            className="mt-6 bg-[#F0EDE8]/90 backdrop-blur-md p-4 rounded-2xl shadow-lg w-56 rotate-[-3deg] pointer-events-auto border border-white"
           >
             <ul className="text-[13px] font-serif italic text-[#6A604A] space-y-2.5">
-              <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#D9738A]"/> Drag cell to rotate</li>
-              <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#6A4C93]"/> Observe dynamic depth</li>
+              <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#B97CCB]"/> Drag cell to rotate</li>
+              <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#D986FF]"/> Observe dynamic depth</li>
               <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#D4B886]"/> Physics-based interaction</li>
             </ul>
             <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-10 h-2.5 bg-white/80 rounded-full shadow-sm" />
@@ -474,13 +474,13 @@ const CenterColumn = ({ selectedOrganelleId, hoveredOrganelleId, setHoveredOrgan
 
         {/* View Mode Controls (z-index: 5) */}
         <div className="absolute top-6 right-6 bg-white/70 backdrop-blur-xl border border-white/80 p-3 rounded-2xl shadow-sm pointer-events-auto" style={{ zIndex: 5 }}>
-          <div className="text-[10px] uppercase tracking-widest text-[#7A736E] font-bold mb-2 ml-1">View Mode</div>
+          <div className="text-[10px] uppercase tracking-widest text-[#6E6961] font-bold mb-2 ml-1">View Mode</div>
           <div className="flex items-center gap-1 bg-black/5 p-1 rounded-xl mb-4 relative">
             {['cube', 'layers', 'dot'].map((mode) => (
               <button 
                 key={mode}
                 onClick={() => setViewMode(mode)}
-                className={`w-11 h-9 rounded-lg flex items-center justify-center relative transition-colors z-10 ${viewMode === mode ? 'text-[#6A4C93]' : 'text-[#7A736E] hover:text-[#2D2926]'}`}
+                className={`w-11 h-9 rounded-lg flex items-center justify-center relative transition-colors z-10 ${viewMode === mode ? 'text-[#D986FF]' : 'text-[#6E6961] hover:text-[#1D1B19]'}`}
               >
                 {viewMode === mode && <motion.div layoutId="viewMode" className="absolute inset-0 bg-white rounded-lg shadow-sm border border-black/5 -z-10" />}
                 {mode === 'cube' && <Box size={18} />}
@@ -490,7 +490,7 @@ const CenterColumn = ({ selectedOrganelleId, hoveredOrganelleId, setHoveredOrgan
             ))}
           </div>
           <div className="flex items-center justify-between px-1.5">
-            <span className="text-xs text-[#5A544F] font-semibold">Cross-Section</span>
+            <span className="text-xs text-[#4C4842] font-semibold">Cross-Section</span>
             <div 
               onClick={() => setCrossSection(!crossSection)}
               className={`w-11 h-6 rounded-full p-1 cursor-pointer transition-colors relative shadow-inner ${crossSection ? 'bg-[#3B82F6]' : 'bg-black/20'}`}
@@ -530,26 +530,26 @@ const CenterColumn = ({ selectedOrganelleId, hoveredOrganelleId, setHoveredOrgan
         {/* Bottom Viewer Controls (z-index: 5) */}
         <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end pointer-events-none" style={{ zIndex: 5 }}>
           <div className="flex gap-2 pointer-events-auto">
-            <PremiumButton className="flex items-center gap-2 px-5 py-2.5 bg-white/80 backdrop-blur-md rounded-2xl text-sm font-semibold text-[#5A544F] hover:text-[#2D2926]">
+            <PremiumButton className="flex items-center gap-2 px-5 py-2.5 bg-white/80 backdrop-blur-md rounded-2xl text-sm font-semibold text-[#4C4842] hover:text-[#1D1B19]">
               <RotateCcw size={16} /> Rotate
             </PremiumButton>
-            <PremiumButton onClick={() => onSelectOrganelle('lysosome')} active={selectedOrganelleId === 'lysosome'} className="flex items-center gap-2 px-5 py-2.5 bg-white/80 backdrop-blur-md rounded-2xl text-sm font-semibold text-[#5A544F] hover:text-[#2D2926]">
+            <PremiumButton onClick={() => onSelectOrganelle('lysosome')} active={selectedOrganelleId === 'lysosome'} className="flex items-center gap-2 px-5 py-2.5 bg-white/80 backdrop-blur-md rounded-2xl text-sm font-semibold text-[#4C4842] hover:text-[#1D1B19]">
               <Target size={16} /> {selectedOrganelleId === 'lysosome' ? 'Lysosome Isolated' : 'Isolate Lysosome'}
             </PremiumButton>
-            <PremiumButton className="flex items-center gap-2 px-5 py-2.5 bg-white/80 backdrop-blur-md rounded-2xl text-sm font-semibold text-[#5A544F] hover:text-[#2D2926]">
+            <PremiumButton className="flex items-center gap-2 px-5 py-2.5 bg-white/80 backdrop-blur-md rounded-2xl text-sm font-semibold text-[#4C4842] hover:text-[#1D1B19]">
               <EyeOff size={16} /> Hide Others
             </PremiumButton>
             <div className="w-px bg-black/10 mx-2 my-2" />
-            <PremiumButton className="flex items-center gap-2 px-5 py-2.5 bg-white/80 backdrop-blur-md rounded-2xl text-sm font-semibold text-[#5A544F] hover:text-[#2D2926]">
+            <PremiumButton className="flex items-center gap-2 px-5 py-2.5 bg-white/80 backdrop-blur-md rounded-2xl text-sm font-semibold text-[#4C4842] hover:text-[#1D1B19]">
               <Maximize size={16} /> Reset View
             </PremiumButton>
           </div>
 
           <div className="flex gap-2 pointer-events-auto">
-            <PremiumButton className="flex items-center gap-2 px-5 py-2.5 bg-white/90 backdrop-blur-md rounded-2xl text-sm font-semibold text-[#5A544F] hover:text-[#2D2926]">
+            <PremiumButton className="flex items-center gap-2 px-5 py-2.5 bg-white/90 backdrop-blur-md rounded-2xl text-sm font-semibold text-[#4C4842] hover:text-[#1D1B19]">
               <Camera size={16} /> Screenshot
             </PremiumButton>
-            <PremiumButton className="flex items-center gap-2 px-5 py-2.5 bg-white/90 backdrop-blur-md rounded-2xl text-sm font-semibold text-[#5A544F] hover:text-[#2D2926]">
+            <PremiumButton className="flex items-center gap-2 px-5 py-2.5 bg-white/90 backdrop-blur-md rounded-2xl text-sm font-semibold text-[#4C4842] hover:text-[#1D1B19]">
               <Box size={16} /> 3D Export
             </PremiumButton>
           </div>
@@ -561,12 +561,12 @@ const CenterColumn = ({ selectedOrganelleId, hoveredOrganelleId, setHoveredOrgan
         {/* Microscope View */}
         <PremiumPanel className="flex-[2] flex flex-col p-5">
           <div className="flex items-center gap-2 mb-4 px-1">
-            <h2 className="font-serif italic text-[#7A736E] uppercase tracking-widest text-[11px] font-bold">Microscope View</h2>
+            <h2 className="font-serif italic text-[#6E6961] uppercase tracking-widest text-[11px] font-bold">Microscope View</h2>
             <Info size={12} className="text-[#A39E98]" />
           </div>
           <div className="flex gap-4 flex-1 overflow-x-auto custom-scrollbar pb-2">
             {[
-              { id: 1, name: 'Light Microscope', color: 'bg-[#FDFBF7] border-[#EBE4DA]' },
+              { id: 1, name: 'Light Microscope', color: 'bg-[#F0EDE8] border-[#DDD7CF]' },
               { id: 2, name: 'Stained Selection', color: 'bg-purple-50 border-purple-200' },
               { id: 3, name: 'Electron Microscope', color: 'bg-gray-100 border-gray-300 grayscale' },
             ].map((view) => (
@@ -575,10 +575,10 @@ const CenterColumn = ({ selectedOrganelleId, hoveredOrganelleId, setHoveredOrgan
                      <div className="absolute inset-0 opacity-[0.45] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent" />
                      <div className="w-full h-full flex items-center justify-center opacity-70 mix-blend-overlay text-4xl drop-shadow-sm">🦠</div>
                   </div>
-                  <span className="text-xs font-semibold text-center text-[#5A544F] group-hover:text-[#2D2926] transition-colors">{view.name}</span>
+                  <span className="text-xs font-semibold text-center text-[#4C4842] group-hover:text-[#1D1B19] transition-colors">{view.name}</span>
                </motion.div>
             ))}
-            <motion.button whileHover={{ y: -2, backgroundColor: '#ffffff' }} className="w-[120px] shrink-0 flex flex-col items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-[#D1CFC9] bg-white/50 transition-colors text-[#7A736E] hover:text-[#2D2926]">
+            <motion.button whileHover={{ y: -2, backgroundColor: '#ffffff' }} className="w-[120px] shrink-0 flex flex-col items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-[#D1CFC9] bg-white/50 transition-colors text-[#6E6961] hover:text-[#1D1B19]">
               <Plus size={24} className="opacity-80" />
               <span className="text-[11px] font-semibold tracking-wide">Add Image</span>
             </motion.button>
@@ -588,31 +588,31 @@ const CenterColumn = ({ selectedOrganelleId, hoveredOrganelleId, setHoveredOrgan
         {/* Compare Cells */}
         <PremiumPanel className="flex-[1] flex flex-col p-5">
            <div className="flex items-center gap-2 mb-5 px-1">
-            <h2 className="font-serif italic text-[#7A736E] uppercase tracking-widest text-[11px] font-bold">Compare Cells</h2>
+            <h2 className="font-serif italic text-[#6E6961] uppercase tracking-widest text-[11px] font-bold">Compare Cells</h2>
             <Info size={12} className="text-[#A39E98]" />
           </div>
-          <div className="bg-gradient-to-r from-white to-[#FDFBF7] rounded-2xl border border-[#EBE4DA] p-3.5 flex items-center justify-between relative mb-4 shadow-sm">
+          <div className="bg-gradient-to-r from-white to-[#FDFBF7] rounded-2xl border border-[#DDD7CF] p-3.5 flex items-center justify-between relative mb-4 shadow-sm">
              <div className="flex items-center gap-3">
                 <span className="text-2xl drop-shadow-sm">🦠</span>
                 <div className="flex flex-col">
-                  <span className="text-xs font-bold text-[#2D2926]">White Blood Cell</span>
-                  <span className="text-[10px] text-[#8B847C] italic">(You are here)</span>
+                  <span className="text-xs font-bold text-[#1D1B19]">White Blood Cell</span>
+                  <span className="text-[10px] text-[#8A837A] italic">(You are here)</span>
                 </div>
              </div>
              
-             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-gradient-to-br from-[#6A4C93] to-[#8A68B4] text-white flex items-center justify-center text-[10px] font-black shadow-md z-10 border-2 border-white">
+             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-gradient-to-br from-[#D986FF] to-[#C97AEE] text-white flex items-center justify-center text-[10px] font-black shadow-md z-10 border-2 border-white">
                 VS
              </div>
 
              <div className="flex items-center gap-3">
                 <div className="flex flex-col text-right">
-                  <span className="text-xs font-bold text-[#2D2926]">Epithelial Cell</span>
-                  <span className="text-[10px] text-[#8B847C] italic">Tissue</span>
+                  <span className="text-xs font-bold text-[#1D1B19]">Epithelial Cell</span>
+                  <span className="text-[10px] text-[#8A837A] italic">Tissue</span>
                 </div>
                 <span className="text-2xl drop-shadow-sm">🧱</span>
              </div>
           </div>
-          <motion.button whileHover={{ scale: 1.01, backgroundColor: '#ffffff' }} whileTap={{ scale: 0.99 }} className="w-full py-2.5 bg-white/50 rounded-xl border border-black/5 text-xs font-bold text-[#5A544F] hover:text-[#2D2926] transition-all flex items-center justify-center gap-2 mt-auto shadow-sm">
+          <motion.button whileHover={{ scale: 1.01, backgroundColor: '#ffffff' }} whileTap={{ scale: 0.99 }} className="w-full py-2.5 bg-white/50 rounded-xl border border-black/5 text-xs font-bold text-[#4C4842] hover:text-[#1D1B19] transition-all flex items-center justify-center gap-2 mt-auto shadow-sm">
             Open Comparison View <ChevronRight size={14} />
           </motion.button>
         </PremiumPanel>
@@ -628,10 +628,10 @@ export default function App() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Manrope:wght@400;500;600;700&display=swap');
         
-        .font-serif { font-family: 'Playfair Display', serif; }
-        .font-sans { font-family: 'Inter', sans-serif; }
+        .font-serif { font-family: 'Cormorant Garamond', serif; }
+        .font-sans { font-family: 'Manrope', sans-serif; }
         
         .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
@@ -661,7 +661,7 @@ export default function App() {
         }
       `}</style>
       
-      <div className="h-screen w-screen bg-[#FDFBF7] text-[#2D2926] font-sans flex flex-col overflow-hidden selection:bg-[#E8E2F0]">
+      <div className="h-screen w-screen bg-[#F0EDE8] text-[#1D1B19] font-sans flex flex-col overflow-hidden selection:bg-[#EDE7F4]">
         <TopNav />
         <main 
           className="grid gap-4 lg:gap-[20px] p-3 md:p-5 overflow-x-hidden"
