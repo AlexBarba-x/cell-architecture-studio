@@ -63,55 +63,34 @@ const InteractiveCellViewer = () => {
   const rawY = useMotionValue(0);
   const isDragging = useMotionValue(false);
 
-  // Premium Apple-style spring physics: heavy mass, high damping for silky smooth, suspended momentum
-  const springConfig = { damping: 52, stiffness: 132, mass: 1.95, restDelta: 0.001 };
+  // Restrained spring for subtle inertial drag
+  const springConfig = { damping: 58, stiffness: 112, mass: 2.05, restDelta: 0.001 };
   const x = useSpring(rawX, springConfig);
   const y = useSpring(rawY, springConfig);
 
-  // Slow cinematic drift for museum-grade suspension
+  // Gentle floating drift
   const time = useTime();
-  const breathY = useTransform(time, [0, 12000, 24000], [0, -5, 0], { clamp: false });
-  const breathScale = useTransform(time, [0, 11000, 22000], [1, 1.005, 1], { clamp: false });
-  const floatRotate = useTransform(time, [0, 18000, 36000], [-0.45, 0.45, -0.45], { clamp: false });
+  const breathY = useTransform(time, [0, 14000, 28000], [0, -2, 0], { clamp: false });
+  const breathScale = useTransform(time, [0, 14000, 28000], [1, 1.002, 1], { clamp: false });
+  const floatRotate = useTransform(time, [0, 24000, 48000], [-0.15, 0.15, -0.15], { clamp: false });
 
-  // 1. 2.5D ROTATION - Restricted bounds to maintain illusion integrity
-  const rotateX = useTransform(y, [-400, 400], [8.5, -8.5]);
-  const rotateY = useTransform(x, [-400, 400], [-8.5, 8.5]);
-
-  // 2. TACTILE PARALLAX SHIFTS - Layers translate slightly off-axis to simulate internal volume
-  const reliefX = useTransform(x, [-400, 400], [8, -8]);
-  const reliefY = useTransform(y, [-400, 400], [8, -8]);
-  
-  const depthX = useTransform(x, [-400, 400], [-10, 10]);
-  const depthY = useTransform(y, [-400, 400], [-10, 10]);
-  
-  const organelleX = useTransform(x, [-400, 400], [-20, 20]);
-  const organelleY = useTransform(y, [-400, 400], [-20, 20]);
+  // Tiny interaction tilt only
+  const rotateX = useTransform(y, [-240, 240], [3, -3]);
+  const rotateY = useTransform(x, [-240, 240], [-3, 3]);
 
   // 3. DYNAMIC SPECULAR LIGHTING - Soft membrane gloss responding to cursor/drag
-  const lightX = useTransform(x, [-400, 400], [70, 30]);
-  const lightY = useTransform(y, [-400, 400], [68, 32]);
+  const lightX = useTransform(x, [-240, 240], [56, 44]);
+  const lightY = useTransform(y, [-240, 240], [56, 44]);
   
-  const highlightBg = useMotionTemplate`radial-gradient(circle at ${lightX}% ${lightY}%, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.12) 28%, rgba(255, 255, 255, 0.03) 48%, rgba(255, 255, 255, 0) 68%)`;
-  const rimLightBg = useMotionTemplate`radial-gradient(65% 60% at ${lightX}% ${lightY}%, rgba(255,255,255,0.24), rgba(255,255,255,0) 70%)`;
-
-  // Multi-layer organelle drift: restrained depth stacking from a single sheet
-  const organelleMidX = useTransform(x, [-400, 400], [-13, 13]);
-  const organelleMidY = useTransform(y, [-400, 400], [-13, 13]);
-
-  // Depth map driven tonality shifts for perceived light direction changes
-  const depthBrightness = useTransform(y, [-400, 0, 400], [1.08, 1.0, 0.94]);
-  const depthContrast = useTransform(x, [-400, 0, 400], [1.02, 1.0, 1.06]);
-  const depthSaturate = useTransform(x, [-400, 400], [0.98, 1.04]);
-  const depthFilter = useMotionTemplate`brightness(${depthBrightness}) contrast(${depthContrast}) saturate(${depthSaturate})`;
+  const highlightBg = useMotionTemplate`radial-gradient(circle at ${lightX}% ${lightY}%, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.06) 35%, rgba(255, 255, 255, 0) 65%)`;
 
   // Micro lighting shift for hero body, tied to interaction depth
-  const heroBrightness = useTransform(y, [-400, 400], [1.02, 0.985]);
+  const heroBrightness = useTransform(y, [-240, 240], [1.01, 0.99]);
   const heroFilter = useMotionTemplate`brightness(${heroBrightness})`;
 
   // 4. ANCHORING SHADOWS - Moves opposite to interaction to ground the object
-  const dropShadowX = useTransform(x, [-400, 400], [16, -16]);
-  const dropShadowY = useTransform(y, [-400, 400], [16, -16]);
+  const dropShadowX = useTransform(x, [-240, 240], [5, -5]);
+  const dropShadowY = useTransform(y, [-240, 240], [5, -5]);
 
   // 5. MOUSE-REACTIVE DIMENSIONALITY - Subtle tracking without dragging
   const handlePointerMove = (e) => {
@@ -121,8 +100,8 @@ const InteractiveCellViewer = () => {
     const centerY = rect.top + rect.height / 2;
     
     // Convert pointer distance from center into a subtle transform offset
-    rawX.set((e.clientX - centerX) * 0.12);
-    rawY.set((e.clientY - centerY) * 0.12);
+    rawX.set((e.clientX - centerX) * 0.045);
+    rawY.set((e.clientY - centerY) * 0.045);
   };
 
   const handlePointerLeave = () => {
@@ -131,8 +110,7 @@ const InteractiveCellViewer = () => {
     rawY.set(0);
   };
 
-  const bgParticles = useMemo(() => Array.from({ length: 5 }, (_, i) => i), []);
-  const fgParticles = useMemo(() => Array.from({ length: 3 }, (_, i) => i), []);
+  const bgParticles = useMemo(() => Array.from({ length: 2 }, (_, i) => i), []);
 
   return (
     <>
@@ -143,15 +121,15 @@ const InteractiveCellViewer = () => {
             key={`bg-part-${i}`}
             className="absolute rounded-full will-change-transform"
             style={{
-              width: 20 + i * 15,
-              height: 20 + i * 15,
-              background: i % 2 === 0 ? 'rgba(106, 76, 147, 0.12)' : 'rgba(217, 115, 138, 0.12)',
-              left: `${15 + i * 18}%`,
-              top: `${15 + (i % 3) * 25}%`,
-              filter: `blur(${8 + i * 2}px)`,
+              width: 18 + i * 10,
+              height: 18 + i * 10,
+              background: 'rgba(106, 76, 147, 0.06)',
+              left: `${22 + i * 40}%`,
+              top: `${28 + i * 20}%`,
+              filter: 'blur(4px)',
             }}
-            animate={{ y: [0, -30, 0], x: [0, 15, 0] }}
-            transition={{ duration: 12 + i * 2, repeat: Infinity, ease: [0.32, 0, 0.18, 1], delay: i * 0.5 }}
+            animate={{ y: [0, -8, 0], x: [0, 4, 0] }}
+            transition={{ duration: 15 + i * 2, repeat: Infinity, ease: [0.32, 0, 0.18, 1], delay: i * 0.7 }}
           />
         ))}
       </div>
@@ -174,13 +152,13 @@ const InteractiveCellViewer = () => {
           className="relative w-full aspect-square pointer-events-auto cursor-grab active:cursor-grabbing"
           drag
           dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
-          dragElastic={0.14}
+          dragElastic={0.08}
           dragMomentum
           dragTransition={{
-            power: 0.24,
-            timeConstant: 520,
-            bounceStiffness: 160,
-            bounceDamping: 34
+            power: 0.14,
+            timeConstant: 640,
+            bounceStiffness: 120,
+            bounceDamping: 40
           }}
           onDragStart={() => isDragging.set(true)}
           onDrag={(e, info) => {
@@ -194,86 +172,32 @@ const InteractiveCellViewer = () => {
           animate={prefersReducedMotion ? undefined : { }}
           style={{ rotateX, rotateY, y: breathY, scale: breathScale, rotateZ: floatRotate, transformStyle: 'preserve-3d', willChange: 'transform' }}
         >
-          {/* Subtle Ambient Backlight Glow for Cinematic Depth */}
+          {/* Restrained backlight */}
           <div 
-            className="absolute inset-0 m-auto w-[75%] h-[75%] rounded-full bg-white opacity-[0.35] blur-[80px] pointer-events-none"
-            style={{ transform: 'translateZ(-100px)' }}
+            className="absolute inset-0 m-auto w-[68%] h-[68%] rounded-full bg-white/35 blur-[28px] pointer-events-none"
+            style={{ transform: 'translateZ(-36px)' }}
           />
 
-          {/* Deep External Drop Shadow */}
+          {/* Grounding shadow */}
           <motion.div 
-            className="absolute inset-0 m-auto w-[65%] h-[65%] rounded-full bg-black/25 blur-[50px] pointer-events-none"
-            style={{ x: dropShadowX, y: dropShadowY, translateZ: -60 }}
+            className="absolute inset-0 m-auto w-[62%] h-[62%] rounded-full bg-black/16 blur-[22px] pointer-events-none"
+            style={{ x: dropShadowX, y: dropShadowY, translateZ: -24 }}
           />
 
-          {/* 1. Base Relief Map - Subtle rear shadows tracking away from light */}
-          <LayeredImage
-            src={ASSETS.relief}
-            alt="Cell relief map"
-            className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-multiply opacity-[0.35]"
-            style={{ x: reliefX, y: reliefY, translateZ: -10, willChange: 'transform' }}
-          />
-
-          {/* 2. PRISTINE HERO LAYER */}
+          {/* Primary hero layer only */}
           <LayeredImage
             src={ASSETS.hero}
-            alt="White blood cell hero layer"
-            className="absolute inset-0 w-full h-full object-contain pointer-events-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.15)]"
+            alt="White blood cell hero image"
+            className="absolute inset-0 w-full h-full object-contain pointer-events-none drop-shadow-[0_12px_20px_rgba(0,0,0,0.1)]"
             style={{ translateZ: 0, filter: heroFilter, willChange: 'transform, filter' }}
           />
 
-          {/* 3. Depth Map Parallax - Volumetric highlights and internal depth */}
-          <LayeredImage
-            src={ASSETS.depth}
-            alt="Cell depth map"
-            className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-screen opacity-[0.32]"
-            style={{ x: depthX, y: depthY, filter: depthFilter, translateZ: 15, willChange: 'transform, filter' }}
-          />
-
-          {/* 4. Organelles Parallax - Foreground elements popping off the surface */}
-          <LayeredImage
-            src={ASSETS.organelles}
-            alt="Organelle overlay"
-            className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-overlay opacity-[0.3]"
-            style={{ x: organelleMidX, y: organelleMidY, translateZ: 22, willChange: 'transform' }}
-          />
-          <LayeredImage
-            src={ASSETS.organelles}
-            alt="Organelle foreground overlay"
-            className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-overlay opacity-[0.38]"
-            style={{ x: organelleX, y: organelleY, translateZ: 34, willChange: 'transform' }}
-          />
-
-          {/* 5. Responsive Lighting Gradient - Membrane specularity */}
+          {/* Restrained lighting response */}
           <motion.div 
-            className="absolute inset-0 w-full h-full rounded-full pointer-events-none mix-blend-overlay"
-            style={{ background: highlightBg, translateZ: 40 }}
-          />
-          <motion.div 
-            className="absolute inset-0 w-full h-full rounded-full pointer-events-none mix-blend-screen opacity-60"
-            style={{ background: rimLightBg, translateZ: 18 }}
+            className="absolute inset-[8%] w-[84%] h-[84%] rounded-full pointer-events-none mix-blend-soft-light"
+            style={{ background: highlightBg, translateZ: 8 }}
           />
         </motion.div>
-      </div>
-
-      {/* Foreground Particles (z-index: 1) */}
-      <div className="absolute inset-0 z-1 pointer-events-none overflow-hidden rounded-3xl">
-        {fgParticles.map((i) => (
-          <motion.div
-            key={`fg-part-${i}`}
-            className="absolute rounded-full border border-white/30 backdrop-blur-md shadow-sm will-change-transform"
-            style={{
-              width: 30 + i * 20,
-              height: 30 + i * 20,
-              background: i % 2 === 0 ? 'rgba(106, 76, 147, 0.15)' : 'rgba(217, 115, 138, 0.15)',
-              right: `${20 + i * 25}%`,
-              bottom: `${15 + (i % 2) * 40}%`,
-              filter: `blur(${1.5 + i}px)`,
-            }}
-            animate={{ y: [0, -20, 0], x: [0, -10, 0] }}
-            transition={{ duration: 6 + i * 1.5, repeat: Infinity, ease: [0.32, 0, 0.18, 1], delay: i * 0.4 }}
-          />
-        ))}
       </div>
     </>
   );
