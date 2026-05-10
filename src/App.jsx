@@ -27,11 +27,11 @@ const CELL_TYPES = [
 ];
 
 const ORGANELLES = [
-  { id: 'nucleus', name: 'Nucleus', color: '#6A4C93' },
-  { id: 'lobed', name: 'Lobed Nucleus', color: '#8A68B4' },
-  { id: 'plasma', name: 'Plasma Membrane', color: '#D4B886' },
-  { id: 'lysosome', name: 'Lysosome', color: '#D9738A' },
-  { id: 'golgi', name: 'Golgi Apparatus', color: '#E8A598' },
+  { id: 'nucleus', name: 'Nucleus', color: '#6A4C93', summary: 'Houses DNA and coordinates core cellular decisions.', detail: 'The nucleus protects the genome and regulates transcription programs that determine immune response behavior.' },
+  { id: 'lobed', name: 'Lobed Nucleus', color: '#8A68B4', summary: 'Segmented architecture that improves flexibility in transit.', detail: 'A lobed profile helps white blood cells deform and migrate through narrow endothelial junctions.' },
+  { id: 'plasma', name: 'Plasma Membrane', color: '#D4B886', summary: 'Selective, signaling-rich cellular boundary.', detail: 'Membrane receptors detect chemotactic cues and coordinate movement toward inflammatory targets.' },
+  { id: 'lysosome', name: 'Lysosome', color: '#D9738A', summary: 'Acidic recycling center for biomolecular cleanup.', detail: 'Lysosomes digest engulfed pathogens and recycle macromolecules with pH-dependent hydrolase enzymes.' },
+  { id: 'golgi', name: 'Golgi Apparatus', color: '#E8A598', summary: 'Modifies and routes proteins to functional destinations.', detail: 'The Golgi packages enzymes and membrane proteins required for secretion, trafficking, and immune signaling.' },
 ];
 
 // --- COMPONENTS ---
@@ -326,7 +326,7 @@ const TopNav = () => (
   </header>
 );
 
-const LeftColumn = () => (
+const LeftColumn = ({ selectedOrganelleId, hoveredOrganelleId, setHoveredOrganelleId, onSelectOrganelle }) => (
   <aside className="flex flex-col gap-[20px] overflow-hidden h-full">
     <PremiumPanel className="flex flex-col flex-1">
       <div className="flex items-center justify-between mb-4 px-2">
@@ -361,12 +361,37 @@ const LeftColumn = () => (
         <ChevronDown size={14} className="text-[#A39E98]" />
       </div>
       <div className="flex flex-col gap-1 flex-1">
-        {ORGANELLES.map(org => (
-          <PremiumButton key={org.id} className="flex items-center gap-3 px-3 py-2 rounded-xl w-full text-left">
-            <div className="w-3 h-3 rounded-full shadow-inner border border-black/10" style={{ backgroundColor: org.color }} />
-            <span className="text-sm font-medium text-[#5A544F]">{org.name}</span>
-          </PremiumButton>
-        ))}
+        {ORGANELLES.map(org => {
+          const isActive = selectedOrganelleId === org.id;
+          const isHovered = hoveredOrganelleId === org.id;
+          return (
+            <div key={org.id} className="relative">
+              <PremiumButton
+                active={isActive}
+                onMouseEnter={() => setHoveredOrganelleId(org.id)}
+                onMouseLeave={() => setHoveredOrganelleId(null)}
+                onFocus={() => setHoveredOrganelleId(org.id)}
+                onBlur={() => setHoveredOrganelleId(null)}
+                onClick={() => onSelectOrganelle(org.id)}
+                className={`flex items-center gap-3 px-3 py-2 rounded-xl w-full text-left transition-all duration-400 ${isHovered ? 'bg-white/85 border border-white shadow-[0_10px_20px_rgba(106,76,147,0.12)]' : ''}`}
+              >
+                <div className="w-3 h-3 rounded-full shadow-inner border border-black/10 transition-transform duration-300" style={{ backgroundColor: org.color, transform: isHovered ? 'scale(1.15)' : 'scale(1)' }} />
+                <span className={`text-sm font-medium transition-colors duration-300 ${isActive ? 'text-[#2D2926]' : 'text-[#5A544F]'}`}>{org.name}</span>
+              </PremiumButton>
+
+              <motion.div
+                initial={false}
+                animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 4 }}
+                transition={{ duration: 0.24, ease: [0.32, 0, 0.18, 1] }}
+                className="pointer-events-none absolute left-[calc(100%+10px)] top-1/2 -translate-y-1/2 w-56 z-20 bg-[#FDFBF7]/95 backdrop-blur-md border border-white rounded-xl shadow-lg px-3 py-2"
+              >
+                <p className="text-[11px] uppercase tracking-widest text-[#8B847C] font-semibold mb-1">Educational Note</p>
+                <p className="text-xs text-[#5A544F] leading-relaxed">{org.summary}</p>
+              </motion.div>
+            </div>
+          );
+        })}
+
       </div>
       <motion.button 
         whileHover={{ scale: 1.01, backgroundColor: '#ffffff' }}
@@ -379,7 +404,9 @@ const LeftColumn = () => (
   </aside>
 );
 
-const RightColumn = () => (
+const RightColumn = ({ selectedOrganelleId }) => {
+  const selectedOrganelle = ORGANELLES.find((org) => org.id === selectedOrganelleId) || ORGANELLES[3];
+  return (
   <aside className="flex flex-col gap-[20px] overflow-y-auto custom-scrollbar pr-1 h-full">
     <PremiumPanel>
       <div className="flex justify-between items-center mb-6">
@@ -398,8 +425,8 @@ const RightColumn = () => (
           </div>
         </div>
         <div>
-          <h3 className="text-[22px] font-serif text-[#2D2926] leading-tight">Lysosome</h3>
-          <p className="text-xs text-[#8B847C] italic mt-0.5">The cellular cleanup crew</p>
+          <motion.h3 key={selectedOrganelle.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="text-[22px] font-serif text-[#2D2926] leading-tight">{selectedOrganelle.name}</motion.h3>
+          <motion.p key={`${selectedOrganelle.id}-summary`} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="text-xs text-[#8B847C] italic mt-0.5">{selectedOrganelle.summary}</motion.p>
         </div>
       </div>
 
@@ -428,9 +455,9 @@ const RightColumn = () => (
 
     <PremiumPanel>
       <h2 className="font-serif italic text-[#7A736E] uppercase tracking-widest text-[11px] font-bold mb-4">Biological Notes</h2>
-      <p className="text-sm text-[#5A544F] leading-relaxed mb-4">
-        White blood cells are immune cells that can identify threats, move toward infection sites, and help coordinate defense responses.
-      </p>
+      <motion.p key={`${selectedOrganelle.id}-detail`} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="text-sm text-[#5A544F] leading-relaxed mb-4">
+        {selectedOrganelle.detail}
+      </motion.p>
       <motion.div whileHover={{ scale: 1.01 }} className="p-4 bg-gradient-to-br from-[#FDFBF7] to-[#F6F1EA] rounded-2xl border border-white shadow-sm flex items-start gap-3">
         <span className="text-xl leading-none pt-0.5">✨</span>
         <p className="text-xs text-[#6A4C93] italic font-semibold leading-relaxed">
@@ -454,11 +481,14 @@ const RightColumn = () => (
       </div>
     </PremiumPanel>
   </aside>
-);
+  );
+};
 
-const CenterColumn = () => {
+const CenterColumn = ({ selectedOrganelleId, hoveredOrganelleId, setHoveredOrganelleId, onSelectOrganelle }) => {
   const [viewMode, setViewMode] = useState('layers');
   const [crossSection, setCrossSection] = useState(true);
+  const selectedOrganelle = ORGANELLES.find((org) => org.id === selectedOrganelleId) || ORGANELLES[3];
+  const isolateLysosome = selectedOrganelleId === 'lysosome';
 
   return (
     <div className="flex flex-col gap-[20px] min-w-0 h-full">
@@ -517,7 +547,31 @@ const CenterColumn = () => {
         </div>
 
         {/* Interactive Cell Viewer Base System */}
-        <InteractiveCellViewer />
+        <div
+          className={`absolute inset-0 transition-all duration-500 ${isolateLysosome ? 'saturate-110' : ''}`}
+          onMouseLeave={() => setHoveredOrganelleId(null)}
+        >
+          <InteractiveCellViewer />
+
+          <motion.div
+            className="absolute inset-0 rounded-3xl pointer-events-none"
+            animate={{ opacity: isolateLysosome ? 1 : 0 }}
+            transition={{ duration: 0.45 }}
+            style={{ background: 'radial-gradient(circle at 56% 56%, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 17%, rgba(55,45,44,0.22) 33%, rgba(55,45,44,0.3) 100%)' }}
+          />
+
+          <motion.button
+            onMouseEnter={() => setHoveredOrganelleId('lysosome')}
+            onMouseLeave={() => setHoveredOrganelleId(null)}
+            onClick={() => onSelectOrganelle('lysosome')}
+            className="absolute left-[52%] top-[56%] -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full pointer-events-auto"
+            animate={{ scale: hoveredOrganelleId === 'lysosome' || isolateLysosome ? 1 : 0.96 }}
+            transition={{ type: 'spring', stiffness: 180, damping: 24 }}
+            style={{ background: 'radial-gradient(circle, rgba(217,115,138,0.35), rgba(217,115,138,0.04))', boxShadow: hoveredOrganelleId === 'lysosome' || isolateLysosome ? '0 0 0 1px rgba(217,115,138,0.45), 0 0 24px rgba(217,115,138,0.35)' : '0 0 0 1px rgba(217,115,138,0.2)' }}
+          >
+            <span className="sr-only">Focus lysosome</span>
+          </motion.button>
+        </div>
 
         {/* Bottom Viewer Controls (z-index: 5) */}
         <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end pointer-events-none" style={{ zIndex: 5 }}>
@@ -525,8 +579,8 @@ const CenterColumn = () => {
             <PremiumButton className="flex items-center gap-2 px-5 py-2.5 bg-white/80 backdrop-blur-md rounded-2xl text-sm font-semibold text-[#5A544F] hover:text-[#2D2926]">
               <RotateCcw size={16} /> Rotate
             </PremiumButton>
-            <PremiumButton className="flex items-center gap-2 px-5 py-2.5 bg-white/80 backdrop-blur-md rounded-2xl text-sm font-semibold text-[#5A544F] hover:text-[#2D2926]">
-              <Target size={16} /> Isolate
+            <PremiumButton onClick={() => onSelectOrganelle('lysosome')} active={selectedOrganelleId === 'lysosome'} className="flex items-center gap-2 px-5 py-2.5 bg-white/80 backdrop-blur-md rounded-2xl text-sm font-semibold text-[#5A544F] hover:text-[#2D2926]">
+              <Target size={16} /> {selectedOrganelleId === 'lysosome' ? 'Lysosome Isolated' : 'Isolate Lysosome'}
             </PremiumButton>
             <PremiumButton className="flex items-center gap-2 px-5 py-2.5 bg-white/80 backdrop-blur-md rounded-2xl text-sm font-semibold text-[#5A544F] hover:text-[#2D2926]">
               <EyeOff size={16} /> Hide Others
@@ -614,6 +668,9 @@ const CenterColumn = () => {
 };
 
 export default function App() {
+  const [selectedOrganelleId, setSelectedOrganelleId] = useState('lysosome');
+  const [hoveredOrganelleId, setHoveredOrganelleId] = useState(null);
+
   return (
     <>
       <style>{`
@@ -634,9 +691,19 @@ export default function App() {
           className="grid gap-[20px] p-5"
           style={{ gridTemplateColumns: '260px 1fr 330px', height: 'calc(100vh - 72px)' }}
         >
-          <LeftColumn />
-          <CenterColumn />
-          <RightColumn />
+          <LeftColumn
+            selectedOrganelleId={selectedOrganelleId}
+            hoveredOrganelleId={hoveredOrganelleId}
+            setHoveredOrganelleId={setHoveredOrganelleId}
+            onSelectOrganelle={setSelectedOrganelleId}
+          />
+          <CenterColumn
+            selectedOrganelleId={selectedOrganelleId}
+            hoveredOrganelleId={hoveredOrganelleId}
+            setHoveredOrganelleId={setHoveredOrganelleId}
+            onSelectOrganelle={setSelectedOrganelleId}
+          />
+          <RightColumn selectedOrganelleId={selectedOrganelleId} />
         </main>
       </div>
     </>
