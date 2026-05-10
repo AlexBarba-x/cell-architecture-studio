@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate, useTime } from 'framer-motion';
+import React, { useMemo, useState } from 'react';
+import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate, useTime, useReducedMotion } from 'framer-motion';
 import { 
   Grid, Book, Settings, ChevronDown, Plus, Heart, 
   Camera, Box, Layers, Target, EyeOff, Maximize, 
@@ -37,20 +37,22 @@ const ORGANELLES = [
 // --- COMPONENTS ---
 
 const InteractiveCellViewer = () => {
+  const prefersReducedMotion = useReducedMotion();
   // Core physical drag/hover coordinates
   const rawX = useMotionValue(0);
   const rawY = useMotionValue(0);
   const isDragging = useMotionValue(false);
 
   // Premium Apple-style spring physics: heavy mass, high damping for silky smooth, suspended momentum
-  const springConfig = { damping: 60, stiffness: 80, mass: 3.5 };
+  const springConfig = { damping: 48, stiffness: 120, mass: 1.85, restDelta: 0.001 };
   const x = useSpring(rawX, springConfig);
   const y = useSpring(rawY, springConfig);
 
   // Slow cinematic drift for museum-grade suspension
   const time = useTime();
-  const floatY = useTransform(time, [0, 12000], [0, -10], { clamp: false });
-  const floatRotate = useTransform(time, [0, 18000], [0, 1.2], { clamp: false });
+  const breathY = useTransform(time, [0, 11000, 22000], [0, -6, 0], { clamp: false });
+  const breathScale = useTransform(time, [0, 9000, 18000], [1, 1.006, 1], { clamp: false });
+  const floatRotate = useTransform(time, [0, 16000, 32000], [-0.6, 0.6, -0.6], { clamp: false });
 
   // 1. 2.5D ROTATION - Restricted bounds to maintain illusion integrity
   const rotateX = useTransform(y, [-400, 400], [10, -10]);
@@ -67,10 +69,11 @@ const InteractiveCellViewer = () => {
   const organelleY = useTransform(y, [-400, 400], [-24, 24]);
 
   // 3. DYNAMIC SPECULAR LIGHTING - Soft membrane gloss responding to cursor/drag
-  const lightX = useTransform(x, [-400, 400], [75, 25]);
-  const lightY = useTransform(y, [-400, 400], [75, 25]);
+  const lightX = useTransform(x, [-400, 400], [70, 30]);
+  const lightY = useTransform(y, [-400, 400], [68, 32]);
   
-  const highlightBg = useMotionTemplate`radial-gradient(circle at ${lightX}% ${lightY}%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.08) 35%, rgba(255, 255, 255, 0) 62%)`;
+  const highlightBg = useMotionTemplate`radial-gradient(circle at ${lightX}% ${lightY}%, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.12) 28%, rgba(255, 255, 255, 0.03) 48%, rgba(255, 255, 255, 0) 68%)`;
+  const rimLightBg = useMotionTemplate`radial-gradient(65% 60% at ${lightX}% ${lightY}%, rgba(255,255,255,0.24), rgba(255,255,255,0) 70%)`;
 
   // 4. ANCHORING SHADOWS - Moves opposite to interaction to ground the object
   const dropShadowX = useTransform(x, [-400, 400], [16, -16]);
@@ -94,14 +97,17 @@ const InteractiveCellViewer = () => {
     rawY.set(0);
   };
 
+  const bgParticles = useMemo(() => Array.from({ length: 5 }, (_, i) => i), []);
+  const fgParticles = useMemo(() => Array.from({ length: 3 }, (_, i) => i), []);
+
   return (
     <>
       {/* Background Particles (z-index: 0, scoped to container bounds via overflow-hidden) */}
       <div className="absolute inset-0 z-0 pointer-events-none rounded-3xl overflow-hidden">
-        {Array.from({ length: 5 }).map((_, i) => (
+        {bgParticles.map((i) => (
           <motion.div
             key={`bg-part-${i}`}
-            className="absolute rounded-full"
+            className="absolute rounded-full will-change-transform"
             style={{
               width: 20 + i * 15,
               height: 20 + i * 15,
@@ -134,13 +140,13 @@ const InteractiveCellViewer = () => {
           className="relative w-full aspect-square pointer-events-auto cursor-grab active:cursor-grabbing"
           drag
           dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
-          dragElastic={0.14}
+          dragElastic={0.1}
           dragMomentum
           dragTransition={{
-            power: 0.28,
-            timeConstant: 520,
-            bounceStiffness: 120,
-            bounceDamping: 26
+            power: 0.18,
+            timeConstant: 430,
+            bounceStiffness: 180,
+            bounceDamping: 30
           }}
           onDragStart={() => isDragging.set(true)}
           onDrag={(e, info) => {
@@ -151,17 +157,8 @@ const InteractiveCellViewer = () => {
             isDragging.set(false);
           }}
           // Organic, near-imperceptible breathing motion
-          animate={{ 
-            y: [-12, 12, -12],
-            scale: [0.995, 1.005, 0.995],
-            rotateZ: [-0.5, 0.5, -0.5]
-          }} 
-          transition={{ 
-            duration: 10, 
-            repeat: Infinity, 
-            ease: [0.32, 0, 0.18, 1] 
-          }}
-          style={{ rotateX, rotateY, y: floatY, rotateZ: floatRotate, transformStyle: 'preserve-3d' }}
+          animate={prefersReducedMotion ? undefined : { }}
+          style={{ rotateX, rotateY, y: breathY, scale: breathScale, rotateZ: floatRotate, transformStyle: 'preserve-3d', willChange: 'transform' }}
         >
           {/* Subtle Ambient Backlight Glow for Cinematic Depth */}
           <div 
@@ -179,7 +176,7 @@ const InteractiveCellViewer = () => {
           <motion.img
             src={ASSETS.relief}
             className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-multiply opacity-[0.35]"
-            style={{ x: reliefX, y: reliefY, translateZ: -10 }}
+            style={{ x: reliefX, y: reliefY, translateZ: -10, willChange: 'transform' }}
             draggable={false}
           />
 
@@ -187,7 +184,7 @@ const InteractiveCellViewer = () => {
           <motion.img
             src={ASSETS.hero}
             className="absolute inset-0 w-full h-full object-contain pointer-events-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.15)]"
-            style={{ translateZ: 0 }}
+            style={{ translateZ: 0, willChange: 'transform' }}
             draggable={false}
           />
 
@@ -195,7 +192,7 @@ const InteractiveCellViewer = () => {
           <motion.img
             src={ASSETS.depth}
             className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-screen opacity-[0.32]"
-            style={{ x: depthX, y: depthY, translateZ: 15 }}
+            style={{ x: depthX, y: depthY, translateZ: 15, willChange: 'transform' }}
             draggable={false}
           />
 
@@ -203,7 +200,7 @@ const InteractiveCellViewer = () => {
           <motion.img
             src={ASSETS.organelles}
             className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-overlay opacity-[0.45]"
-            style={{ x: organelleX, y: organelleY, translateZ: 30 }}
+            style={{ x: organelleX, y: organelleY, translateZ: 30, willChange: 'transform' }}
             draggable={false}
           />
 
@@ -212,15 +209,19 @@ const InteractiveCellViewer = () => {
             className="absolute inset-0 w-full h-full rounded-full pointer-events-none mix-blend-overlay"
             style={{ background: highlightBg, translateZ: 40 }}
           />
+          <motion.div 
+            className="absolute inset-0 w-full h-full rounded-full pointer-events-none mix-blend-screen opacity-60"
+            style={{ background: rimLightBg, translateZ: 18 }}
+          />
         </motion.div>
       </div>
 
       {/* Foreground Particles (z-index: 1) */}
       <div className="absolute inset-0 z-1 pointer-events-none overflow-hidden rounded-3xl">
-        {Array.from({ length: 3 }).map((_, i) => (
+        {fgParticles.map((i) => (
           <motion.div
             key={`fg-part-${i}`}
-            className="absolute rounded-full border border-white/30 backdrop-blur-md shadow-sm"
+            className="absolute rounded-full border border-white/30 backdrop-blur-md shadow-sm will-change-transform"
             style={{
               width: 30 + i * 20,
               height: 30 + i * 20,
@@ -242,9 +243,10 @@ const InteractiveCellViewer = () => {
 
 const PremiumButton = ({ children, active, className, ...props }) => (
   <motion.button
-    whileHover={{ scale: 1.02, y: -1 }}
-    whileTap={{ scale: 0.98 }}
-    className={`relative overflow-hidden transition-colors ${active ? 'bg-white shadow-sm border border-white/80' : 'hover:bg-white/50 border border-transparent'} ${className}`}
+    whileHover={{ scale: 1.015, y: -1.5 }}
+    whileTap={{ scale: 0.985 }}
+    transition={{ type: 'spring', stiffness: 380, damping: 28, mass: 0.8 }}
+    className={`relative overflow-hidden transition-all duration-300 ${active ? 'bg-white shadow-sm border border-white/80' : 'hover:bg-white/55 hover:shadow-sm border border-transparent'} ${className}`}
     {...props}
   >
     {children}
@@ -252,9 +254,13 @@ const PremiumButton = ({ children, active, className, ...props }) => (
 );
 
 const PremiumPanel = ({ children, className }) => (
-  <div className={`bg-white/60 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-5 ${className}`}>
+  <motion.div
+    whileHover={{ y: -1 }}
+    transition={{ type: 'spring', stiffness: 250, damping: 26 }}
+    className={`bg-white/60 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_34px_rgb(0,0,0,0.06)] rounded-3xl p-5 transition-shadow duration-300 ${className}`}
+  >
     {children}
-  </div>
+  </motion.div>
 );
 
 // --- ARCHITECTURE LAYOUT BLOCKS ---
