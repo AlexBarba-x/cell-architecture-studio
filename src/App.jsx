@@ -51,6 +51,12 @@ const ORGANELLES = [
   { id: 'golgi', name: 'Golgi Apparatus', color: '#E8A598', summary: 'Modifies and routes proteins to functional destinations.', detail: 'The Golgi packages enzymes and membrane proteins required for secretion, trafficking, and immune signaling.' },
 ];
 
+const MICROSCOPY_SLIDES = [
+  { id: 'lm', title: 'Peripheral Smear', magnification: '40×', stain: 'Wright–Giemsa', mode: 'Brightfield LM', acquisition: 'Apr 14, 2026 · Dragon Hall Lab, Boston', tone: 'from-[#f8f3ea] to-[#e7ddcf]' },
+  { id: 'fluoro', title: 'Granule Activity', magnification: '100× oil', stain: 'DAPI + LysoTracker', mode: 'Fluorescence', acquisition: 'Mar 02, 2026 · Imaging Annex, Kyoto', tone: 'from-[#efeaf8] to-[#d7cde8]' },
+  { id: 'sem', title: 'Surface Topography', magnification: '2,500×', stain: 'Gold Sputter', mode: 'SEM', acquisition: 'Jan 27, 2026 · Electron Wing, Oslo', tone: 'from-[#ececec] to-[#d7d7d7]' },
+];
+
 // --- COMPONENTS ---
 
 const InteractiveCellViewer = () => {
@@ -366,7 +372,7 @@ const RightColumn = ({ selectedOrganelleId }) => {
   const selectedOrganelle = ORGANELLES.find((org) => org.id === selectedOrganelleId) || ORGANELLES[3];
   return (
   <aside className="flex flex-col gap-[20px] overflow-y-auto custom-scrollbar pr-1 h-full">
-    <PremiumPanel>
+    <PremiumPanel className="border-[#e3ddd4]">
       <div className="flex justify-between items-center mb-6">
         <h2 className="font-serif italic text-[#6E6961] uppercase tracking-widest text-[11px] font-bold">Organelle Details</h2>
         <motion.div whileHover={{ scale: 1.1 }} className="cursor-pointer">
@@ -411,30 +417,36 @@ const RightColumn = ({ selectedOrganelleId }) => {
       </div>
     </PremiumPanel>
 
-    <PremiumPanel>
+    <PremiumPanel className="border-[#e3ddd4]">
       <h2 className="font-serif italic text-[#6E6961] uppercase tracking-widest text-[11px] font-bold mb-4">Biological Notes</h2>
       <motion.p key={`${selectedOrganelle.id}-detail`} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="text-sm text-[#4C4842] leading-relaxed mb-4">
         {selectedOrganelle.detail}
       </motion.p>
       <motion.div whileHover={{ scale: 1.01 }} className="p-4 bg-gradient-to-br from-[#FDFBF7] to-[#EFEBE5] rounded-2xl border border-white shadow-sm flex items-start gap-3">
-        <span className="text-xl leading-none pt-0.5">✨</span>
+        <span className="text-xl leading-none pt-0.5">✶</span>
         <p className="text-xs text-[#D986FF] italic font-semibold leading-relaxed">
           Fun Fact: Some white blood cells can change shape to squeeze between blood vessel walls and reach infected tissue!
         </p>
       </motion.div>
     </PremiumPanel>
 
-    <PremiumPanel>
-      <h2 className="font-serif italic text-[#6E6961] uppercase tracking-widest text-[11px] font-bold mb-4">Where It Occurs</h2>
-      <div className="h-36 bg-gradient-to-br from-white to-[#EFEBE5] rounded-2xl border border-white shadow-inner overflow-hidden relative flex items-center justify-center">
-        <div className="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-100 to-transparent" />
-        <div className="absolute inset-0 flex items-center justify-center gap-6">
-           <motion.span animate={{ y: [-2, 2, -2] }} transition={{ duration: 4, repeat: Infinity, ease: [0.32, 0, 0.18, 1] }} className="text-[50px] z-10 drop-shadow-md">
-             🧍
-           </motion.span>
-           <div className="w-20 h-20 rounded-full border border-red-300/50 border-dashed animate-[spin_12s_linear_infinite] flex items-center justify-center p-1.5 z-10">
-              <div className="w-full h-full rounded-full bg-gradient-to-tr from-red-100 to-white shadow-sm flex items-center justify-center text-2xl animate-[spin_12s_linear_infinite_reverse]">🩸</div>
-           </div>
+    <PremiumPanel className="border-[#e3ddd4]">
+      <h2 className="font-serif italic text-[#6E6961] uppercase tracking-widest text-[11px] font-bold mb-4">Field Provenance</h2>
+      <div className="rounded-2xl border border-[#d9d0c4] bg-gradient-to-br from-[#f7f2e9] to-[#ece3d7] p-4 shadow-inner relative overflow-hidden">
+        <div className="absolute inset-0 opacity-40 bg-[repeating-linear-gradient(90deg,transparent,transparent_14px,rgba(80,62,30,0.035)_15px)]" />
+        <div className="relative space-y-3">
+          <div className="flex items-start justify-between border-b border-black/10 pb-2">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-[#8a8177]">Source Tissue</span>
+            <span className="text-xs font-semibold text-[#332f2a]">Peripheral blood</span>
+          </div>
+          <div className="flex items-start justify-between border-b border-black/10 pb-2">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-[#8a8177]">Preservation</span>
+            <span className="text-xs font-semibold text-[#332f2a]">Methanol fixation</span>
+          </div>
+          <div className="flex items-start justify-between">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-[#8a8177]">Atlas Entry</span>
+            <span className="text-xs font-semibold text-[#332f2a]">DH-BIO-WBC-311</span>
+          </div>
         </div>
       </div>
     </PremiumPanel>
@@ -561,63 +573,64 @@ const CenterColumn = ({ selectedOrganelleId, hoveredOrganelleId, setHoveredOrgan
       </div>
 
       {/* Bottom Panels Row */}
-      <div className="flex gap-[20px] shrink-0 h-[200px]">
+      <div className="grid grid-cols-[2.1fr_1.4fr] gap-[18px] shrink-0 min-h-[260px]">
         {/* Microscope View */}
-        <PremiumPanel className="flex-[2] flex flex-col p-5">
-          <div className="flex items-center gap-2 mb-4 px-1">
-            <h2 className="font-serif italic text-[#6E6961] uppercase tracking-widest text-[11px] font-bold">Microscope View</h2>
+        <PremiumPanel className="flex flex-col p-6 border-[#ddd2c4] bg-[linear-gradient(145deg,rgba(255,255,255,0.76),rgba(246,240,232,0.72))]">
+          <div className="flex items-center justify-between gap-2 mb-5 px-1">
+            <h2 className="font-serif italic text-[#5f564b] uppercase tracking-[0.18em] text-[11px] font-bold">Microscopy Archive</h2>
             <Info size={12} className="text-[#A39E98]" />
           </div>
-          <div className="flex gap-4 flex-1 overflow-x-auto custom-scrollbar pb-2">
-            {[
-              { id: 1, name: 'Light Microscope', color: 'bg-[#F0EDE8] border-[#DDD7CF]' },
-              { id: 2, name: 'Stained Selection', color: 'bg-purple-50 border-purple-200' },
-              { id: 3, name: 'Electron Microscope', color: 'bg-gray-100 border-gray-300 grayscale' },
-            ].map((view) => (
-               <motion.div key={view.id} whileHover={{ y: -2 }} className="w-[160px] shrink-0 flex flex-col gap-2.5 cursor-pointer group">
-                  <div className={`flex-1 rounded-2xl border-[1.5px] overflow-hidden relative ${view.color} transition-all shadow-sm group-hover:shadow-md`}>
-                     <div className="absolute inset-0 opacity-[0.45] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent" />
-                     <div className="w-full h-full flex items-center justify-center opacity-70 mix-blend-overlay text-4xl drop-shadow-sm">🦠</div>
+          <div className="grid grid-cols-3 gap-4 flex-1">
+            {MICROSCOPY_SLIDES.map((slide) => (
+               <motion.article key={slide.id} whileHover={{ y: -3, scale: 1.01 }} transition={{ duration: 0.24 }} className="rounded-[1.2rem] border border-[#cfc2b2] bg-[#f9f5ee] p-2.5 shadow-[0_8px_18px_rgba(43,30,16,0.08)] cursor-pointer group">
+                  <div className={`rounded-[0.9rem] border border-white/80 bg-gradient-to-br ${slide.tone} overflow-hidden relative h-[108px]`}>
+                     <motion.div whileHover={{ scale: 1.08 }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }} className="w-full h-full flex items-center justify-center text-5xl">🧫</motion.div>
+                     <div className="absolute inset-0 bg-[linear-gradient(112deg,rgba(255,255,255,0.54)_0%,rgba(255,255,255,0.05)_33%,rgba(255,255,255,0.26)_100%)]" />
+                     <div className="absolute right-2 top-2 text-[9px] tracking-[0.2em] uppercase px-2 py-0.5 rounded-full border border-black/10 bg-white/65 text-[#4e473e]">{slide.magnification}</div>
                   </div>
-                  <span className="text-xs font-semibold text-center text-[#4C4842] group-hover:text-[#1D1B19] transition-colors">{view.name}</span>
-               </motion.div>
+                  <div className="pt-2.5 px-1">
+                    <p className="text-xs font-semibold text-[#2f2b25]">{slide.title}</p>
+                    <p className="text-[10px] mt-1 text-[#6e665d]"><span className="uppercase tracking-widest">Stain</span> · {slide.stain}</p>
+                    <p className="text-[10px] text-[#6e665d]"><span className="uppercase tracking-widest">Mode</span> · {slide.mode}</p>
+                    <p className="text-[9px] mt-1.5 text-[#8a8177]">{slide.acquisition}</p>
+                  </div>
+               </motion.article>
             ))}
-            <motion.button whileHover={{ y: -2, backgroundColor: '#ffffff' }} className="w-[120px] shrink-0 flex flex-col items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-[#D1CFC9] bg-white/50 transition-colors text-[#6E6961] hover:text-[#1D1B19]">
+            <motion.button whileHover={{ y: -2, backgroundColor: '#ffffff' }} className="rounded-[1.1rem] border border-dashed border-[#cdbca8] bg-white/45 transition-colors text-[#6E6961] hover:text-[#1D1B19] flex flex-col justify-center items-center gap-2">
               <Plus size={24} className="opacity-80" />
-              <span className="text-[11px] font-semibold tracking-wide">Add Image</span>
+              <span className="text-[11px] font-semibold tracking-wide">Catalog Slide</span>
             </motion.button>
           </div>
         </PremiumPanel>
 
         {/* Compare Cells */}
-        <PremiumPanel className="flex-[1] flex flex-col p-5">
+        <PremiumPanel className="flex flex-col p-6 border-[#ddd2c4] bg-[linear-gradient(145deg,rgba(255,255,255,0.78),rgba(245,239,230,0.7))]">
            <div className="flex items-center gap-2 mb-5 px-1">
-            <h2 className="font-serif italic text-[#6E6961] uppercase tracking-widest text-[11px] font-bold">Compare Cells</h2>
+            <h2 className="font-serif italic text-[#5f564b] uppercase tracking-[0.18em] text-[11px] font-bold">Comparative Dossier</h2>
             <Info size={12} className="text-[#A39E98]" />
           </div>
-          <div className="bg-gradient-to-r from-white to-[#FDFBF7] rounded-2xl border border-[#DDD7CF] p-3.5 flex items-center justify-between relative mb-4 shadow-sm">
-             <div className="flex items-center gap-3">
-                <span className="text-2xl drop-shadow-sm">🦠</span>
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold text-[#1D1B19]">White Blood Cell</span>
-                  <span className="text-[10px] text-[#8A837A] italic">(You are here)</span>
+          <div className="rounded-2xl border border-[#d7cab8] bg-[linear-gradient(180deg,#fffdf9,#f2eadf)] p-3.5 mb-4 shadow-sm">
+             <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+                <div className="rounded-xl bg-white/70 border border-white p-3">
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-[#8A837A] mb-1">Primary Specimen</p>
+                  <p className="text-sm font-semibold text-[#1D1B19]">White Blood Cell</p>
+                  <p className="text-[11px] text-[#6d655c] mt-1">Immune surveillance · motile</p>
                 </div>
-             </div>
-             
-             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-gradient-to-br from-[#D986FF] to-[#C97AEE] text-white flex items-center justify-center text-[10px] font-black shadow-md z-10 border-2 border-white">
-                VS
-             </div>
-
-             <div className="flex items-center gap-3">
-                <div className="flex flex-col text-right">
-                  <span className="text-xs font-bold text-[#1D1B19]">Epithelial Cell</span>
-                  <span className="text-[10px] text-[#8A837A] italic">Tissue</span>
+                <div className="text-[10px] uppercase tracking-[0.2em] text-[#766d62] text-center">Against</div>
+                <div className="rounded-xl bg-white/70 border border-white p-3">
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-[#8A837A] mb-1">Reference Cell</p>
+                  <p className="text-sm font-semibold text-[#1D1B19]">Epithelial Cell</p>
+                  <p className="text-[11px] text-[#6d655c] mt-1">Barrier tissue · structured</p>
                 </div>
-                <span className="text-2xl drop-shadow-sm">🧱</span>
              </div>
           </div>
-          <motion.button whileHover={{ scale: 1.01, backgroundColor: '#ffffff' }} whileTap={{ scale: 0.99 }} className="w-full py-2.5 bg-white/50 rounded-xl border border-black/5 text-xs font-bold text-[#4C4842] hover:text-[#1D1B19] transition-all flex items-center justify-center gap-2 mt-auto shadow-sm">
-            Open Comparison View <ChevronRight size={14} />
+          <div className="space-y-2 mb-4 text-[11px] text-[#51493f]">
+            <div className="flex justify-between border-b border-black/10 pb-1.5"><span>Nuclear architecture</span><span className="font-medium">Lobed ↔ Compact</span></div>
+            <div className="flex justify-between border-b border-black/10 pb-1.5"><span>Motility index</span><span className="font-medium">High ↔ Low</span></div>
+            <div className="flex justify-between"><span>Primary role</span><span className="font-medium">Defense ↔ Barrier</span></div>
+          </div>
+          <motion.button whileHover={{ scale: 1.01, backgroundColor: '#ffffff' }} whileTap={{ scale: 0.99 }} className="w-full py-2.5 bg-white/60 rounded-xl border border-black/5 text-xs font-bold text-[#4C4842] hover:text-[#1D1B19] transition-all flex items-center justify-center gap-2 mt-auto shadow-sm">
+            Open Taxonomic Comparison <ChevronRight size={14} />
           </motion.button>
         </PremiumPanel>
       </div>
