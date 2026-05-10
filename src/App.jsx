@@ -9,9 +9,6 @@ import {
 // --- ASSETS ---
 const ASSETS = {
   hero: "https://raw.githubusercontent.com/AlexBarba-x/cell-architecture-core-assets/main/white_blood_cell_hero_original.png",
-  depth: "https://raw.githubusercontent.com/AlexBarba-x/cell-architecture-core-assets/main/white_blood_cell_depth_map.png",
-  relief: "https://raw.githubusercontent.com/AlexBarba-x/cell-architecture-core-assets/main/white_blood_cell_relief_map.png",
-  organelles: "https://raw.githubusercontent.com/AlexBarba-x/cell-architecture-core-assets/main/white_blood_cell_organelle_sheet.png"
 };
 
 const FALLBACK_DATA_URI = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 800'%3E%3Cdefs%3E%3CradialGradient id='g' cx='50%25' cy='50%25' r='60%25'%3E%3Cstop offset='0%25' stop-color='%23fdfbf7'/%3E%3Cstop offset='100%25' stop-color='%23ebe4da'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='800' height='800' fill='url(%23g)'/%3E%3Ccircle cx='400' cy='400' r='220' fill='%236A4C93' fill-opacity='.16'/%3E%3Ctext x='400' y='415' text-anchor='middle' font-family='Inter,sans-serif' font-size='28' fill='%237A736E'%3EAsset loading…%3C/text%3E%3C/svg%3E";
@@ -153,7 +150,7 @@ const InteractiveCellViewer = () => {
           drag
           dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
           dragElastic={0.08}
-          dragMomentum
+          dragMomentum={false}
           dragTransition={{
             power: 0.14,
             timeConstant: 640,
@@ -168,9 +165,15 @@ const InteractiveCellViewer = () => {
           onDragEnd={() => {
             isDragging.set(false);
           }}
-          // Organic, near-imperceptible breathing motion
-          animate={prefersReducedMotion ? undefined : { }}
-          style={{ rotateX, rotateY, y: breathY, scale: breathScale, rotateZ: floatRotate, transformStyle: 'preserve-3d', willChange: 'transform' }}
+          style={{
+            rotateX,
+            rotateY,
+            y: prefersReducedMotion ? 0 : breathY,
+            scale: prefersReducedMotion ? 1 : breathScale,
+            rotateZ: prefersReducedMotion ? 0 : floatRotate,
+            transformStyle: 'preserve-3d',
+            willChange: 'transform'
+          }}
         >
           {/* Restrained backlight */}
           <div 
@@ -189,7 +192,14 @@ const InteractiveCellViewer = () => {
             src={ASSETS.hero}
             alt="White blood cell hero image"
             className="absolute inset-0 w-full h-full object-contain pointer-events-none drop-shadow-[0_12px_20px_rgba(0,0,0,0.1)]"
-            style={{ translateZ: 0, filter: heroFilter, willChange: 'transform, filter' }}
+            style={{
+              translateZ: 0,
+              filter: heroFilter,
+              willChange: 'transform, filter',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+              transform: 'translateZ(0.01px)'
+            }}
           />
 
           {/* Restrained lighting response */}
@@ -439,8 +449,8 @@ const CenterColumn = ({ selectedOrganelleId, hoveredOrganelleId, setHoveredOrgan
       
       {/* --- HERO STAGE --- */}
       <div 
-        className="relative flex-1 bg-gradient-to-br from-[#F6F1EA] to-[#EBE4DA]/40 rounded-3xl border border-white/80 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),_0_8px_30px_rgb(0,0,0,0.04)]"
-        style={{ minHeight: '520px', minWidth: 0, overflow: 'visible' }}
+        className="relative flex-1 bg-gradient-to-br from-[#F6F1EA] to-[#EBE4DA]/40 rounded-3xl border border-white/80 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),_0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden"
+        style={{ minHeight: '520px', minWidth: 0 }}
       >
         {/* Floating Note (z-index: 5) */}
         <div className="absolute top-6 left-6 pointer-events-none" style={{ zIndex: 5 }}>
@@ -654,7 +664,7 @@ export default function App() {
       <div className="h-screen w-screen bg-[#FDFBF7] text-[#2D2926] font-sans flex flex-col overflow-hidden selection:bg-[#E8E2F0]">
         <TopNav />
         <main 
-          className="grid gap-4 lg:gap-[20px] p-3 md:p-5"
+          className="grid gap-4 lg:gap-[20px] p-3 md:p-5 overflow-x-hidden"
           style={{ gridTemplateColumns: 'minmax(220px,260px) 1fr minmax(280px,330px)', height: 'calc(100vh - 72px)' }}
         >
           <LeftColumn
