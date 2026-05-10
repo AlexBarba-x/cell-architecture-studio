@@ -257,7 +257,7 @@ const TopNav = () => (
       </div>
       <div className="hidden md:flex items-center gap-2 ml-4">
         <div className="h-4 w-px bg-black/10" />
-        <span className="text-xs italic text-[#8A837A] font-serif pt-1">Brand Identity System</span>
+        <span className="text-xs italic text-[#8A837A] font-serif pt-1">Biology Atlas</span>
       </div>
     </div>
 
