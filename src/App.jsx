@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate, useTime } from 'framer-motion';
 import { 
   Grid, Book, Settings, ChevronDown, Plus, Heart, 
   Camera, Box, Layers, Target, EyeOff, Maximize, 
@@ -47,29 +47,34 @@ const InteractiveCellViewer = () => {
   const x = useSpring(rawX, springConfig);
   const y = useSpring(rawY, springConfig);
 
+  // Slow cinematic drift for museum-grade suspension
+  const time = useTime();
+  const floatY = useTransform(time, [0, 12000], [0, -10], { clamp: false });
+  const floatRotate = useTransform(time, [0, 18000], [0, 1.2], { clamp: false });
+
   // 1. 2.5D ROTATION - Restricted bounds to maintain illusion integrity
   const rotateX = useTransform(y, [-400, 400], [10, -10]);
   const rotateY = useTransform(x, [-400, 400], [-10, 10]);
 
   // 2. TACTILE PARALLAX SHIFTS - Layers translate slightly off-axis to simulate internal volume
-  const reliefX = useTransform(x, [-400, 400], [6, -6]);
-  const reliefY = useTransform(y, [-400, 400], [6, -6]);
+  const reliefX = useTransform(x, [-400, 400], [8, -8]);
+  const reliefY = useTransform(y, [-400, 400], [8, -8]);
   
-  const depthX = useTransform(x, [-400, 400], [-8, 8]);
-  const depthY = useTransform(y, [-400, 400], [-8, 8]);
+  const depthX = useTransform(x, [-400, 400], [-11, 11]);
+  const depthY = useTransform(y, [-400, 400], [-11, 11]);
   
-  const organelleX = useTransform(x, [-400, 400], [-18, 18]);
-  const organelleY = useTransform(y, [-400, 400], [-18, 18]);
+  const organelleX = useTransform(x, [-400, 400], [-24, 24]);
+  const organelleY = useTransform(y, [-400, 400], [-24, 24]);
 
   // 3. DYNAMIC SPECULAR LIGHTING - Soft membrane gloss responding to cursor/drag
   const lightX = useTransform(x, [-400, 400], [75, 25]);
   const lightY = useTransform(y, [-400, 400], [75, 25]);
   
-  const highlightBg = useMotionTemplate`radial-gradient(circle at ${lightX}% ${lightY}%, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 55%)`;
+  const highlightBg = useMotionTemplate`radial-gradient(circle at ${lightX}% ${lightY}%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.08) 35%, rgba(255, 255, 255, 0) 62%)`;
 
   // 4. ANCHORING SHADOWS - Moves opposite to interaction to ground the object
-  const dropShadowX = useTransform(x, [-400, 400], [20, -20]);
-  const dropShadowY = useTransform(y, [-400, 400], [20, -20]);
+  const dropShadowX = useTransform(x, [-400, 400], [16, -16]);
+  const dropShadowY = useTransform(y, [-400, 400], [16, -16]);
 
   // 5. MOUSE-REACTIVE DIMENSIONALITY - Subtle tracking without dragging
   const handlePointerMove = (e) => {
@@ -79,8 +84,8 @@ const InteractiveCellViewer = () => {
     const centerY = rect.top + rect.height / 2;
     
     // Convert pointer distance from center into a subtle transform offset
-    rawX.set((e.clientX - centerX) * 0.15);
-    rawY.set((e.clientY - centerY) * 0.15);
+    rawX.set((e.clientX - centerX) * 0.12);
+    rawY.set((e.clientY - centerY) * 0.12);
   };
 
   const handlePointerLeave = () => {
@@ -106,7 +111,7 @@ const InteractiveCellViewer = () => {
               filter: `blur(${8 + i * 2}px)`,
             }}
             animate={{ y: [0, -30, 0], x: [0, 15, 0] }}
-            transition={{ duration: 12 + i * 2, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
+            transition={{ duration: 12 + i * 2, repeat: Infinity, ease: [0.32, 0, 0.18, 1], delay: i * 0.5 }}
           />
         ))}
       </div>
@@ -116,9 +121,9 @@ const InteractiveCellViewer = () => {
         style={{
           position: 'absolute',
           left: '50%',
-          top: '57%',
+          top: '56%',
           transform: 'translate(-50%, -50%)',
-          width: 'min(92%, 880px)',
+          width: 'min(96%, 980px)',
           zIndex: 2,
           perspective: '1400px'
         }}
@@ -129,7 +134,14 @@ const InteractiveCellViewer = () => {
           className="relative w-full aspect-square pointer-events-auto cursor-grab active:cursor-grabbing"
           drag
           dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
-          dragElastic={0.08}
+          dragElastic={0.14}
+          dragMomentum
+          dragTransition={{
+            power: 0.28,
+            timeConstant: 520,
+            bounceStiffness: 120,
+            bounceDamping: 26
+          }}
           onDragStart={() => isDragging.set(true)}
           onDrag={(e, info) => {
             rawX.set(info.offset.x);
@@ -137,8 +149,6 @@ const InteractiveCellViewer = () => {
           }}
           onDragEnd={() => {
             isDragging.set(false);
-            rawX.set(0);
-            rawY.set(0);
           }}
           // Organic, near-imperceptible breathing motion
           animate={{ 
@@ -149,9 +159,9 @@ const InteractiveCellViewer = () => {
           transition={{ 
             duration: 10, 
             repeat: Infinity, 
-            ease: "easeInOut" 
+            ease: [0.32, 0, 0.18, 1] 
           }}
-          style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
+          style={{ rotateX, rotateY, y: floatY, rotateZ: floatRotate, transformStyle: 'preserve-3d' }}
         >
           {/* Subtle Ambient Backlight Glow for Cinematic Depth */}
           <div 
@@ -184,7 +194,7 @@ const InteractiveCellViewer = () => {
           {/* 3. Depth Map Parallax - Volumetric highlights and internal depth */}
           <motion.img
             src={ASSETS.depth}
-            className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-screen opacity-[0.25]"
+            className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-screen opacity-[0.32]"
             style={{ x: depthX, y: depthY, translateZ: 15 }}
             draggable={false}
           />
@@ -192,7 +202,7 @@ const InteractiveCellViewer = () => {
           {/* 4. Organelles Parallax - Foreground elements popping off the surface */}
           <motion.img
             src={ASSETS.organelles}
-            className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-overlay opacity-50"
+            className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-overlay opacity-[0.45]"
             style={{ x: organelleX, y: organelleY, translateZ: 30 }}
             draggable={false}
           />
@@ -220,7 +230,7 @@ const InteractiveCellViewer = () => {
               filter: `blur(${1.5 + i}px)`,
             }}
             animate={{ y: [0, -20, 0], x: [0, -10, 0] }}
-            transition={{ duration: 6 + i * 1.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.4 }}
+            transition={{ duration: 6 + i * 1.5, repeat: Infinity, ease: [0.32, 0, 0.18, 1], delay: i * 0.4 }}
           />
         ))}
       </div>
@@ -408,7 +418,7 @@ const RightColumn = () => (
       <div className="h-36 bg-gradient-to-br from-white to-[#F6F1EA] rounded-2xl border border-white shadow-inner overflow-hidden relative flex items-center justify-center">
         <div className="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-100 to-transparent" />
         <div className="absolute inset-0 flex items-center justify-center gap-6">
-           <motion.span animate={{ y: [-2, 2, -2] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="text-[50px] z-10 drop-shadow-md">
+           <motion.span animate={{ y: [-2, 2, -2] }} transition={{ duration: 4, repeat: Infinity, ease: [0.32, 0, 0.18, 1] }} className="text-[50px] z-10 drop-shadow-md">
              🧍
            </motion.span>
            <div className="w-20 h-20 rounded-full border border-red-300/50 border-dashed animate-[spin_12s_linear_infinite] flex items-center justify-center p-1.5 z-10">
@@ -528,7 +538,7 @@ const CenterColumn = () => {
             ].map((view) => (
                <motion.div key={view.id} whileHover={{ y: -2 }} className="w-[160px] shrink-0 flex flex-col gap-2.5 cursor-pointer group">
                   <div className={`flex-1 rounded-2xl border-[1.5px] overflow-hidden relative ${view.color} transition-all shadow-sm group-hover:shadow-md`}>
-                     <div className="absolute inset-0 opacity-50 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent" />
+                     <div className="absolute inset-0 opacity-[0.45] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent" />
                      <div className="w-full h-full flex items-center justify-center opacity-70 mix-blend-overlay text-4xl drop-shadow-sm">🦠</div>
                   </div>
                   <span className="text-xs font-semibold text-center text-[#5A544F] group-hover:text-[#2D2926] transition-colors">{view.name}</span>
